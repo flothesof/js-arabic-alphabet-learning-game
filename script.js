@@ -35,11 +35,11 @@ function generateNewQuestion() {
     var c = document.getElementById("myCanvas");
     var cArabic = c.getContext("2d");
     cArabic.clearRect(0, 0, c.width, c.height);
-    cArabic.font = "200px Arial";
-
+    cArabic.font = "400px Arial";
+    cArabic.textAlign = 'center';
     randomAnswer = letters[randInt(letters.length)];
     randomLetter = LETTER_MAPPING[randomAnswer];
-    cArabic.fillText(randomLetter, 150, 150);
+    cArabic.fillText(randomLetter, c.width / 2., c.height * 3 / 4.);
 
     document.getElementById('game-area').answer = randomAnswer;
 }
