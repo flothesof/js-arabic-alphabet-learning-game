@@ -35,10 +35,26 @@ body {
     margin: 1em;
     background-color: #eeeeee;
     width: 25em;
-    height: 500px;
 }
 
 #progress-bar {
     border: 2px solid black;
-    background-color: aquamarine;
+    text-align: center;
+    margin: 0.1em;
+}
+
+.quizz-button {
+    font-size: x-large;
+    order: 2px solid gray;
+    width: 4em;
+    margin: 0.1em;
+}
+
+.quizz-button:hover {
+    border: 2px solid gray;
+    border-radius: 0.5em;
+}
+
+#button-area {
+    text-align: center;
 }
