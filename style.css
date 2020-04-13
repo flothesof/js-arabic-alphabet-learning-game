@@ -4,10 +4,9 @@ body {
 }
 
 .level {
-    padding: 1em;
-    display: inline-block;
+    padding: 2em;
     width: 25em;
-    margin: 1em;
+    margin: 2em;
     border: 1px solid #808080;
     border-radius: 0.5em;
 }
@@ -31,8 +30,8 @@ body {
 }
 
 #game-area {
-    padding: 1em;
-    margin: 1em;
+    padding: 2em;
+    margin: 2em;
     background-color: #eeeeee;
     width: 25em;
 }

@@ -1,6 +1,9 @@
-const LETTER_MAPPING = { 'a': 'ا', 'ou': 'و', 'i': 'ي' }
+const LETTER_MAPPING = { 'a': 'ا', 'ou': 'و', 'i': 'ي', 'nou': 'ن', 'ha': 'ه', 'd': 'د', 'r': 'ر', 't': 'ت', 'b': 'ب', 'th': 'ث' }
 
-const LEVEL_LETTERS = { 1: ['a', 'ou', 'i'] }
+const LEVEL_LETTERS = {
+    1: ['a', 'ou', 'i'],
+    2: ['b', 't', 'th']
+}
 
 function randInt(N) {
     // returns integer between O and N-1
@@ -61,7 +64,7 @@ function generateNewQuestion() {
     cArabic.clearRect(0, 0, c.width, c.height);
     cArabic.font = "400px Arial";
     cArabic.textAlign = 'center';
-    cArabic.fillText(randomLetter, c.width / 2., c.height * 3 / 4.);
+    cArabic.fillText(randomLetter, c.width / 2., c.height * 4 / 5.);
     document.getElementById('game-area').answer = randomAnswer;
 
     // update progress bar
