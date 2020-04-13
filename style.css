@@ -1,0 +1,40 @@
+body {
+    font-family: 'Rubik', sans-serif;
+    margin: 10px;
+}
+
+.level {
+    background-color: #eeeeee;
+    padding: 1em;
+    display: inline-block;
+    width: 25em;
+    margin: 1em;
+}
+
+.level:hover {
+    background-color: #eeeeff;
+}
+
+.start-game {
+    float: right;
+    padding: 1em;
+    background-color: mediumaquamarine;
+    border: 1px solid black;
+    border-radius: 1em;
+    text-decoration: none;
+}
+
+.start-game:hover {
+    background-color: aquamarine;
+}
+
+#game-area {
+    background-color: #eeeeee;
+    width: 500px;
+    height: 500px;
+}
+
+#progress-bar {
+    border: 1px solid black;
+    background-color: lightgray;
+}

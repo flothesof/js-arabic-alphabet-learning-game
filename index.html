@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <title>Apprendre l'alphabet arabe !</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <h1>Apprendre l'alphabet arabe !</h1>
+
+    Cette web-application a pour but de vous faire apprendre l'alphabet arabe. Elle fonctionne comme un jeu, c'est à dire qu'il va vous falloir passer des niveaux les uns après les autres pour débloquer de nouvelles lettres à apprendre.
+
+    <h1>Niveaux</h1>
+
+    <div class="level">
+        <h2>Lettres A, ou et i</h2>
+        <a href="#game" class="start-game" onclick="runlevel(1)">Démarrer le niveau !</a>
+    </div>
+
+    <div class="level">
+        <h2>Lettres autres</h2>
+        <a href="#game" class="start-game" onclick="runlevel(2)">Démarrer le niveau !</a>
+    </div>
+
+    <div id="game-area">
+        <a name="game"></a>
+        <p>Zone de jeu</p>
+        <div id="progress-bar">Barre de progression</div>
+        <canvas id="myCanvas" dir="rtl" width="400" height="400" style="border:1px solid #d3d3d3;">
+            Your browser does not support the HTML5 canvas tag.
+          </canvas>
+        <div id="button-area"></div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        hide_game_area()
+    </script>
+</body>
