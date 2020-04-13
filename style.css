@@ -22,7 +22,7 @@ body {
     background-color: #0080ff;
     color: white;
     border: 1px solid black;
-    border-radius: 1em;
+    border-radius: .5em;
     text-decoration: none;
 }
 
@@ -39,6 +39,6 @@ body {
 }
 
 #progress-bar {
-    border: 1px solid black;
-    background-color: lightgray;
+    border: 2px solid black;
+    background-color: aquamarine;
 }

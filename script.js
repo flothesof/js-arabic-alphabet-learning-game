@@ -24,7 +24,7 @@ function runlevel(level) {
         button_area.appendChild(button);
         button.addEventListener("click", checkAnswer);
     }
-
+    // generating a new quizz question
     generateNewQuestion();
 }
 
@@ -32,26 +32,32 @@ function generateNewQuestion() {
     // sets up a new question
     level = document.getElementById('game-area').current_level;
     letters = LEVEL_LETTERS[level];
+    if (document.getElementById('game-area').hasAttributes('answer')) {
+        // generate a new random letter that is not the same as the previous one
+        previousValue = document.getElementById('game-area').answer;
+        possibleLetters = letters.filter(function(value, index, arr) { return value != previousValue; });
+        randomAnswer = possibleLetters[randInt(possibleLetters.length)];
+        randomLetter = LETTER_MAPPING[randomAnswer];
+    } else {
+        // generate any new random letter
+        randomAnswer = letters[randInt(letters.length)];
+        randomLetter = LETTER_MAPPING[randomAnswer];
+
+    }
     var c = document.getElementById("myCanvas");
     var cArabic = c.getContext("2d");
     cArabic.clearRect(0, 0, c.width, c.height);
     cArabic.font = "400px Arial";
     cArabic.textAlign = 'center';
-    randomAnswer = letters[randInt(letters.length)];
-    randomLetter = LETTER_MAPPING[randomAnswer];
     cArabic.fillText(randomLetter, c.width / 2., c.height * 3 / 4.);
-
     document.getElementById('game-area').answer = randomAnswer;
 }
 
 function checkAnswer(e) {
     var caller = e.target || e.srcElement;
-    console.log(caller);
     if (document.getElementById('game-area').answer == caller.innerHTML) {
-        console.log('correct');
         document.getElementById('progress-bar').innerHTML += '+';
     } else {
-        console.log('incorrect');
         document.getElementById('progress-bar').innerHTML += '-';
     }
     generateNewQuestion();
@@ -59,7 +65,6 @@ function checkAnswer(e) {
 
 
 
-function hide_game_area() {
-    console.log("entering hide game area().");
+function hideGameArea() {
     document.getElementById('game-area').hidden = true;
 }
