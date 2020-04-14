@@ -100,6 +100,9 @@ function checkAnswer(e) {
         generateNewQuestion();
     } else {
         updateQuizzProgressBar();
+        [chapter, exercise] = document.getElementById('game-area').currentLevel;
+        [correct, incorrect] = [quizzData['correct'], quizzData['incorrect']]
+        updateStarRating(chapter, exercise, correct, incorrect)
     }
 }
 
@@ -143,6 +146,11 @@ function setupLevels() {
                 linkNode.className = 'start-game'
                 div.appendChild(linkNode)
 
+                stars = document.createElement('div')
+                stars.innerHTML = 'Score : &#9734&#9734&#9734&#9734&#9734'
+                stars.id = `score-chapter${chapterIndex}-exercise${exerciseIndex}`
+                div.appendChild(stars)
+
             } else {
                 console.log('Could not recognize task type: ' + taskType);
             }
@@ -185,4 +193,22 @@ function runLevel(chapterIndex, exerciseIndex) {
         // generating a new quizz question
         generateNewQuestion();
     }
+}
+
+function updateStarRating(chapterIndex, exerciseIndex, correct, incorrect) {
+    // updates the score rating
+    if (correct == 32) {
+        score = 'Score : &#9733&#9733&#9733&#9733&#9733'
+    } else if (correct >= 30) {
+        score = 'Score : &#9733&#9733&#9733&#9733&#9734'
+    } else if (correct >= 28) {
+        score = 'Score : &#9733&#9733&#9733&#9734&#9734'
+    } else if (correct >= 16) {
+        score = 'Score : &#9733&#9733&#9734&#9734&#9734'
+    } else if (correct >= 8) {
+        score = 'Score : &#9733&#9734&#9734&#9734&#9734'
+    } else {
+        score = 'Score : &#9733&#9733&#9733&#9733&#9733'
+    }
+    document.getElementById(`score-chapter${chapter}-exercise${exerciseIndex}`).innerHTML = score
 }
