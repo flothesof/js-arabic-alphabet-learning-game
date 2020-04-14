@@ -1,6 +1,7 @@
 body {
     font-family: 'Rubik', sans-serif;
-    margin: 10px;
+    margin: 0 auto;
+    max-width: 500px;
 }
 
 .exercise {

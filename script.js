@@ -208,7 +208,7 @@ function updateStarRating(chapterIndex, exerciseIndex, correct, incorrect) {
     } else if (correct >= 8) {
         score = 'Score : &#9733&#9734&#9734&#9734&#9734'
     } else {
-        score = 'Score : &#9733&#9733&#9733&#9733&#9733'
+        score = 'Score : &#9734&#9734&#9734&#9734&#9734'
     }
     document.getElementById(`score-chapter${chapter}-exercise${exerciseIndex}`).innerHTML = score
 }
