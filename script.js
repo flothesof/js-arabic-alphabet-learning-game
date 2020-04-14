@@ -41,32 +41,6 @@ function randInt(N) {
     return Math.floor(Math.random() * N);
 }
 
-function runlevel(level) {
-    taskLetters
-        = LEVEL_taskLetters[level]
-    document.getElementById('game-area').hidden = false;
-    document.getElementById('game-area').current_level = level
-
-    buttonArea = document.getElementById('button-area');
-    // clearing old children
-    while (buttonArea.firstChild) {
-        buttonArea.removeChild(buttonArea.firstChild);
-    }
-    // adding a button for each letter in the current level
-    for (let i = 0; i < taskLetters
-        .length; i++) {
-        button = document.createElement('button');
-        button.innerHTML = taskLetters[i];
-        button.className = 'quizz-button';
-        buttonArea.appendChild(button);
-        button.addEventListener("click", checkAnswer);
-    }
-    // initializing quizz data
-    document.getElementById('game-area').quizzData = { 'total': 32, 'correct': 0, 'incorrect': 0 };
-    // generating a new quizz question
-    generateNewQuestion();
-}
-
 function updateQuizzProgressBar() {
     // updates progress bar
     quizzData = document.getElementById('game-area').quizzData;
@@ -74,7 +48,7 @@ function updateQuizzProgressBar() {
     progressBar.innerHTML = 'Question : ' + (quizzData['correct'] + quizzData['incorrect']) + '/' + quizzData['total'] + ' | Correctes : ' + quizzData['correct'] + '/' + (quizzData['correct'] + quizzData['incorrect']);
 }
 
-function generateNewQuestion() {
+function generateNewRecognitionQuestion() {
     // sets up a new question
     level = document.getElementById('game-area').current_level;
     taskLetters
@@ -100,21 +74,33 @@ function generateNewQuestion() {
     // saving the new answer for later
     document.getElementById('game-area').answer = randomAnswer;
 
-    // drawing the new question on the canvas
-    var canvas = document.getElementById("myCanvas");
-    var ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.font = "280px Amiri";
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(randomLetter, canvas.width / 2., canvas.height / 2.);
+    // drawing the new letter on the canvas
+    drawLetterOnCanvas(randomLetter);
 
     // update progress bar
     updateQuizzProgressBar();
 
 }
 
-function checkAnswer(e) {
+function clearCanvas() {
+    var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function drawLetterOnCanvas(randomLetter, clearBeforeDrawing = true) {
+    if (clearBeforeDrawing) {
+        clearCanvas();
+    }
+    var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+    ctx.font = "280px Amiri";
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(randomLetter, canvas.width / 2., canvas.height / 2.);
+}
+
+function checkRecognitionAnswer(e) {
     quizzData = document.getElementById('game-area').quizzData;
     if (quizzData['correct'] + quizzData['incorrect'] < quizzData['total']) {
         var caller = e.target || e.srcElement;
@@ -123,7 +109,7 @@ function checkAnswer(e) {
         } else {
             document.getElementById('game-area').quizzData['incorrect'] += 1;
         }
-        generateNewQuestion();
+        generateNewRecognitionQuestion();
     } else {
         updateQuizzProgressBar();
         [chapter, exercise] = document.getElementById('game-area').currentLevel;
@@ -177,6 +163,29 @@ function setupLevels() {
                 stars.id = `score-chapter${chapterIndex}-exercise${exerciseIndex}`
                 div.appendChild(stars)
 
+            } else if (taskType == 'drawing') {
+                div = document.createElement('div')
+                levelRoot.appendChild(div)
+                div.className = 'exercise'
+                header = document.createElement('h3')
+                header.appendChild(document.createTextNode('Exercice ' + (parseInt(chapterIndex) + 1) + '.' + (parseInt(exerciseIndex) + 1) + ' : ' +
+                    ' Dessiner les lettres ' + tasktaskLetters
+                    .join(' - ')))
+
+                div.append(header)
+                linkNode = document.createElement('a')
+                linkNode.appendChild(document.createTextNode('Démarrer le niveau !'))
+                linkNode.href = "#game"
+                linkNode.addEventListener('click', function(e) {
+                    runLevel(chapterIndex, exerciseIndex)
+                })
+                linkNode.className = 'start-game'
+                div.appendChild(linkNode)
+
+                stars = document.createElement('div')
+                stars.innerHTML = 'Score : ' + STAR_MAPPING[0]
+                stars.id = `score-chapter${chapterIndex}-exercise${exerciseIndex}`
+                div.appendChild(stars)
             } else {
                 console.log('Could not recognize task type: ' + taskType);
             }
@@ -186,6 +195,11 @@ function setupLevels() {
 
     }
     hideGameArea()
+    var sketcher = new Sketchable(document.getElementById('myCanvas'));
+    sketcher.config({ 'interactive': false });
+    // keep reference for later
+    document.getElementById('game-area').sketcher = sketcher;
+
 }
 
 
@@ -212,12 +226,53 @@ function runLevel(chapterIndex, exerciseIndex) {
             button.innerHTML = taskLetters[i];
             button.className = 'quizz-button';
             buttonArea.appendChild(button);
-            button.addEventListener("click", checkAnswer);
+            button.addEventListener("click", checkRecognitionAnswer);
         }
         // initializing quizz data
         document.getElementById('game-area').quizzData = { 'total': 32, 'correct': 0, 'incorrect': 0 };
         // generating a new quizz question
-        generateNewQuestion();
+        generateNewRecognitionQuestion();
+
+    } else if (taskType == 'drawing') {
+        document.getElementById('game-area').hidden = false;
+        document.getElementById('game-area').currentLevel = [chapterIndex, exerciseIndex]
+        document.getElementById('game-area').taskLetters = taskLetters
+        buttonArea = document.getElementById('button-area');
+        // clearing old children
+        while (buttonArea.firstChild) {
+            buttonArea.removeChild(buttonArea.firstChild);
+        }
+        // creating buttons / text regions for drawing interactions 
+
+        p = document.createElement('p');
+        p.id = 'drawing-text-area';
+        buttonArea.appendChild(p);
+
+        button = document.createElement('button');
+        button.innerHTML = 'Montrer la bonne réponse';
+        button.id = 'drawing-show-answer';
+        button.addEventListener('click', showDrawingAnswer)
+        buttonArea.appendChild(button);
+
+        button = document.createElement('button');
+        button.innerHTML = '&#10003;'
+        button.id = 'drawing-correct-answer'
+        button.disabled = true;
+        button.addEventListener('click', validateDrawingAnswer);
+        buttonArea.appendChild(button);
+
+        button = document.createElement('button');
+        button.innerHTML = '&#10005;';
+        button.id = 'drawing-incorrect-answer'
+        button.disabled = true;
+        button.addEventListener('click', validateDrawingAnswer);
+        buttonArea.appendChild(button);
+
+
+        // initializing quizz data
+        document.getElementById('game-area').quizzData = { 'total': 32, 'correct': 0, 'incorrect': 0 };
+        // generating a new quizz question
+        generateNewDrawingQuestion();
     }
 }
 
@@ -242,4 +297,75 @@ function updateStarRating(chapterIndex, exerciseIndex, correct, incorrect) {
         document.getElementById(`score-chapter${chapter}-exercise${exerciseIndex}`).innerHTML = 'Score : ' + STAR_MAPPING[score]
     }
 
+}
+
+function generateNewDrawingQuestion() {
+    // generates a new question for a drawing task
+
+    taskLetters
+        = document.getElementById('game-area').taskLetters
+    quizzData = document.getElementById('game-area').quizzData;
+
+    if (document.getElementById('game-area').hasAttributes('answer')) {
+        // generate a new random letter that is not the same as the previous one
+        previousValue = document.getElementById('game-area').answer;
+        possibletaskLetters
+            = taskLetters
+            .filter(function(value, index, arr) { return value != previousValue; });
+        randomAnswer = possibletaskLetters[randInt(possibletaskLetters
+            .length)];
+        randomLetter = LETTER_MAPPING[randomAnswer];
+    } else {
+        // generate any new random letter the first time we start the game
+        randomAnswer = taskLetters[randInt(taskLetters
+            .length)];
+        randomLetter = LETTER_MAPPING[randomAnswer];
+
+    }
+    // saving the new answer for later
+    document.getElementById('game-area').answer = randomAnswer;
+
+    document.getElementById('drawing-text-area').innerHTML = 'La lettre à dessiner est : ' + randomAnswer;
+
+    updateQuizzProgressBar();
+
+    var sketcher = document.getElementById('game-area').sketcher;
+    sketcher.config({ 'interactive': true });
+    document.getElementById('drawing-show-answer').disabled = false;
+    document.getElementById('drawing-correct-answer').disabled = true;
+    document.getElementById('drawing-incorrect-answer').disabled = true;
+
+    clearCanvas();
+
+}
+
+function showDrawingAnswer(e) {
+    var caller = e.target || e.srcElement;
+    console.log('showDrawingAnswer has just been called by ' + caller + ' who has an id ' + caller.id);
+
+
+    // displays the expected letter on the canvas and allows the user to validate his answer
+    quizzData = document.getElementById('game-area').quizzData;
+    if (quizzData['correct'] + quizzData['incorrect'] < quizzData['total']) {
+        drawLetterOnCanvas(LETTER_MAPPING[document.getElementById('game-area').answer], false);
+        document.getElementById('drawing-correct-answer').disabled = false;
+        document.getElementById('drawing-incorrect-answer').disabled = false;
+        document.getElementById('drawing-show-answer').disabled = true;
+    } else {
+        updateQuizzProgressBar();
+        [chapter, exercise] = document.getElementById('game-area').currentLevel;
+        [correct, incorrect] = [quizzData['correct'], quizzData['incorrect']]
+        updateStarRating(chapter, exercise, correct, incorrect)
+    }
+}
+
+function validateDrawingAnswer(e) {
+    var caller = e.target || e.srcElement;
+    if (caller.id == 'drawing-correct-answer') {
+        document.getElementById('game-area').quizzData['correct'] += 1;
+    } else {
+        document.getElementById('game-area').quizzData['incorrect'] += 1;
+    }
+
+    generateNewDrawingQuestion();
 }
