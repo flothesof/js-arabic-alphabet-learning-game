@@ -78,7 +78,7 @@ function generateNewQuestion() {
     var c = document.getElementById("myCanvas");
     var cArabic = c.getContext("2d");
     cArabic.clearRect(0, 0, c.width, c.height);
-    cArabic.font = "400px Arial";
+    cArabic.font = "400px Rubik";
     cArabic.textAlign = 'center';
     cArabic.textBaseline = 'bottom';
     cArabic.fillText(randomLetter, c.width / 2., c.height);
