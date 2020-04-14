@@ -1,3 +1,25 @@
+const reverseMapping = o => Object.keys(o).reduce((r, k) =>
+    Object.assign(r, {
+        [o[k]]: (r[o[k]] || []).concat(k)
+    }), {})
+
+function decodeHtml(html) {
+    var txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+}
+
+const STAR_MAPPING = {
+    5: decodeHtml('&#9733&#9733&#9733&#9733&#9733'),
+    4: decodeHtml('&#9733&#9733&#9733&#9733&#9734'),
+    3: decodeHtml('&#9733&#9733&#9733&#9734&#9734'),
+    2: decodeHtml('&#9733&#9733&#9734&#9734&#9734'),
+    1: decodeHtml('&#9733&#9734&#9734&#9734&#9734'),
+    0: decodeHtml('&#9734&#9734&#9734&#9734&#9734')
+}
+
+REVERSE_STAR_MAPPING = reverseMapping(STAR_MAPPING);
+
 const LETTER_MAPPING = { 'a': 'ا', 'ou': 'و', 'i': 'ي', 'nou': 'ن', 'ha': 'ه', 'd': 'د', 'r': 'ر', 't': 'ت', 'b': 'ب', 'th': 'ث' }
 
 const LEVEL1 = [
@@ -147,7 +169,7 @@ function setupLevels() {
                 div.appendChild(linkNode)
 
                 stars = document.createElement('div')
-                stars.innerHTML = 'Score : &#9734&#9734&#9734&#9734&#9734'
+                stars.innerHTML = 'Score : ' + STAR_MAPPING[0]
                 stars.id = `score-chapter${chapterIndex}-exercise${exerciseIndex}`
                 div.appendChild(stars)
 
@@ -198,17 +220,22 @@ function runLevel(chapterIndex, exerciseIndex) {
 function updateStarRating(chapterIndex, exerciseIndex, correct, incorrect) {
     // updates the score rating
     if (correct == 32) {
-        score = 'Score : &#9733&#9733&#9733&#9733&#9733'
+        score = 5
     } else if (correct >= 30) {
-        score = 'Score : &#9733&#9733&#9733&#9733&#9734'
+        score = 4
     } else if (correct >= 28) {
-        score = 'Score : &#9733&#9733&#9733&#9734&#9734'
+        score = 3
     } else if (correct >= 16) {
-        score = 'Score : &#9733&#9733&#9734&#9734&#9734'
+        score = 2
     } else if (correct >= 8) {
-        score = 'Score : &#9733&#9734&#9734&#9734&#9734'
+        score = 1
     } else {
-        score = 'Score : &#9734&#9734&#9734&#9734&#9734'
+        score = 0
     }
-    document.getElementById(`score-chapter${chapter}-exercise${exerciseIndex}`).innerHTML = score
+    previousStars = document.getElementById(`score-chapter${chapter}-exercise${exerciseIndex}`).innerHTML.split('Score : ')[1]
+    currentScore = REVERSE_STAR_MAPPING[previousStars]
+    if (currentScore < score) {
+        document.getElementById(`score-chapter${chapter}-exercise${exerciseIndex}`).innerHTML = 'Score : ' + STAR_MAPPING[score]
+    }
+
 }
