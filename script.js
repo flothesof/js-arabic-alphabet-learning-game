@@ -1,9 +1,18 @@
 const LETTER_MAPPING = { 'a': 'ا', 'ou': 'و', 'i': 'ي', 'nou': 'ن', 'ha': 'ه', 'd': 'د', 'r': 'ر', 't': 'ت', 'b': 'ب', 'th': 'ث' }
 
-const LEVEL_LETTERS = {
-    1: ['a', 'ou', 'i'],
-    2: ['b', 't', 'th']
-}
+const LEVEL1 = [
+    ['recognition', ['a', 'ou', 'i']],
+    ['drawing', ['a', 'ou', 'i']]
+]
+
+const LEVEL2 = [
+    ['recognition', ['b', 't', 'th']],
+    ['drawing', ['b', 't', 'th']],
+    ['recognition', ['a', 'ou', 'i', 'b', 't', 'th']],
+    ['drawing', ['a', 'ou', 'i', 'b', 't', 'th']]
+]
+
+const LEVELS = [LEVEL1, LEVEL2]
 
 function randInt(N) {
     // returns integer between O and N-1
@@ -91,4 +100,47 @@ function checkAnswer(e) {
 
 function hideGameArea() {
     document.getElementById('game-area').hidden = true;
+}
+
+function setupLevels() {
+    // parse level descriptions and build nested level layout
+    root = document.getElementById('levels-container');
+    for (let chapterIndex in LEVELS) {
+        levelRoot = document.createElement('details');
+        levelSummary = document.createElement('summary');
+        levelHeader = document.createElement('em')
+        levelHeader.innerHTML = 'Chapitre ' + (parseInt(chapterIndex) + 1);
+        levelSummary.appendChild(levelHeader)
+        levelRoot.appendChild(levelSummary)
+        for (let exerciseIndex in LEVELS[chapterIndex]) {
+            items = LEVELS[chapterIndex][exerciseIndex]
+            taskType = items[0];
+            taskLetters = items[1];
+            if (taskType == 'recognition') {
+                header = document.createElement('h3')
+                header.appendChild(document.createTextNode('Exercice ' + (parseInt(chapterIndex) + 1) + '.' + (parseInt(exerciseIndex) + 1) + ' : ' +
+                    ' Reconnaître les lettres ' + taskLetters.join(' - ')))
+                levelRoot.appendChild(header)
+
+                linkNode = document.createElement('a')
+                linkNode.appendChild(document.createTextNode('Démarrer le niveau !'))
+                linkNode.href = "#game"
+                linkNode.addEventListener('click', function(e) {
+                    runLevel(chapterIndex, exerciseIndex)
+                })
+                levelRoot.appendChild(linkNode)
+
+            } else {
+                console.log('Could not recognize task type: ' + taskType);
+            }
+
+        }
+        root.appendChild(levelRoot);
+
+    }
+}
+
+
+function runLevel(chapterIndex, exerciseIndex) {
+    console.log(`Running chapter ${chapterIndex} exercise ${exerciseIndex}`)
 }
