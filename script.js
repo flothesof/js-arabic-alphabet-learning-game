@@ -200,6 +200,14 @@ function setupLevels() {
     // keep reference for later
     document.getElementById('game-area').sketcher = sketcher;
 
+    // disabling swipping / scrolling while drawing
+    // https://stackoverflow.com/questions/49047414/disable-scroll-swipe-action-for-html-canvas-drawing-on-ios
+    var canvas_dom = document.getElementById('myCanvas')
+    canvas_dom.addEventListener("touchstart", function(event) { event.preventDefault() })
+    canvas_dom.addEventListener("touchmove", function(event) { event.preventDefault() })
+    canvas_dom.addEventListener("touchend", function(event) { event.preventDefault() })
+    canvas_dom.addEventListener("touchcancel", function(event) { event.preventDefault() })
+
 }
 
 
