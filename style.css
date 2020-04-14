@@ -1,5 +1,5 @@
 body {
-    font-family: 'Rubik', sans-serif;
+    font-family: "Rubik", sans-serif;
     margin: 0 auto;
     max-width: 500px;
 }
@@ -22,7 +22,7 @@ body {
     background-color: #0080ff;
     color: white;
     border: 1px solid black;
-    border-radius: .5em;
+    border-radius: 0.5em;
     text-decoration: none;
 }
 
@@ -45,14 +45,13 @@ body {
 
 .quizz-button {
     font-size: x-large;
-    order: 2px solid gray;
+    border: 2px solid darkgray;
     width: 4em;
-    margin: 0.1em;
+    margin: 0.3em;
 }
 
 .quizz-button:hover {
     border: 2px solid gray;
-    border-radius: 0.5em;
 }
 
 #button-area {

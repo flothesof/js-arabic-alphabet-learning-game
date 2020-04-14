@@ -249,14 +249,16 @@ function runLevel(chapterIndex, exerciseIndex) {
         buttonArea.appendChild(p);
 
         button = document.createElement('button');
-        button.innerHTML = 'Montrer la bonne réponse';
+        button.innerHTML = 'Montrer';
         button.id = 'drawing-show-answer';
+        button.className = 'quizz-button';
         button.addEventListener('click', showDrawingAnswer)
         buttonArea.appendChild(button);
 
         button = document.createElement('button');
         button.innerHTML = '&#10003;'
         button.id = 'drawing-correct-answer'
+        button.className = 'quizz-button';
         button.disabled = true;
         button.addEventListener('click', validateDrawingAnswer);
         buttonArea.appendChild(button);
@@ -264,6 +266,7 @@ function runLevel(chapterIndex, exerciseIndex) {
         button = document.createElement('button');
         button.innerHTML = '&#10005;';
         button.id = 'drawing-incorrect-answer'
+        button.className = 'quizz-button';
         button.disabled = true;
         button.addEventListener('click', validateDrawingAnswer);
         buttonArea.appendChild(button);
