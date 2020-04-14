@@ -3,7 +3,7 @@ body {
     margin: 10px;
 }
 
-.level {
+.exercise {
     padding: 2em;
     width: 25em;
     margin: 2em;
@@ -11,7 +11,7 @@ body {
     border-radius: 0.5em;
 }
 
-.level:hover {
+.exercise:hover {
     background-color: #eeecec;
 }
 
@@ -56,4 +56,9 @@ body {
 
 #button-area {
     text-align: center;
+}
+
+details em {
+    font-size: xx-large;
+    font-style: normal;
 }

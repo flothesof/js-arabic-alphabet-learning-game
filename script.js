@@ -20,21 +20,23 @@ function randInt(N) {
 }
 
 function runlevel(level) {
-    letters = LEVEL_LETTERS[level]
+    taskLetters
+        = LEVEL_taskLetters[level]
     document.getElementById('game-area').hidden = false;
     document.getElementById('game-area').current_level = level
 
-    button_area = document.getElementById('button-area');
+    buttonArea = document.getElementById('button-area');
     // clearing old children
-    while (button_area.firstChild) {
-        button_area.removeChild(button_area.firstChild);
+    while (buttonArea.firstChild) {
+        buttonArea.removeChild(buttonArea.firstChild);
     }
     // adding a button for each letter in the current level
-    for (let i = 0; i < letters.length; i++) {
+    for (let i = 0; i < taskLetters
+        .length; i++) {
         button = document.createElement('button');
-        button.innerHTML = letters[i];
+        button.innerHTML = taskLetters[i];
         button.className = 'quizz-button';
-        button_area.appendChild(button);
+        buttonArea.appendChild(button);
         button.addEventListener("click", checkAnswer);
     }
     // initializing quizz data
@@ -53,18 +55,23 @@ function updateQuizzProgressBar() {
 function generateNewQuestion() {
     // sets up a new question
     level = document.getElementById('game-area').current_level;
-    letters = LEVEL_LETTERS[level];
+    taskLetters
+        = document.getElementById('game-area').taskLetters
     quizzData = document.getElementById('game-area').quizzData;
 
     if (document.getElementById('game-area').hasAttributes('answer')) {
         // generate a new random letter that is not the same as the previous one
         previousValue = document.getElementById('game-area').answer;
-        possibleLetters = letters.filter(function(value, index, arr) { return value != previousValue; });
-        randomAnswer = possibleLetters[randInt(possibleLetters.length)];
+        possibletaskLetters
+            = taskLetters
+            .filter(function(value, index, arr) { return value != previousValue; });
+        randomAnswer = possibletaskLetters[randInt(possibletaskLetters
+            .length)];
         randomLetter = LETTER_MAPPING[randomAnswer];
     } else {
         // generate any new random letter the first time we start the game
-        randomAnswer = letters[randInt(letters.length)];
+        randomAnswer = taskLetters[randInt(taskLetters
+            .length)];
         randomLetter = LETTER_MAPPING[randomAnswer];
 
     }
@@ -115,20 +122,26 @@ function setupLevels() {
         for (let exerciseIndex in LEVELS[chapterIndex]) {
             items = LEVELS[chapterIndex][exerciseIndex]
             taskType = items[0];
-            taskLetters = items[1];
+            tasktaskLetters
+                = items[1];
             if (taskType == 'recognition') {
+                div = document.createElement('div')
+                levelRoot.appendChild(div)
+                div.className = 'exercise'
                 header = document.createElement('h3')
                 header.appendChild(document.createTextNode('Exercice ' + (parseInt(chapterIndex) + 1) + '.' + (parseInt(exerciseIndex) + 1) + ' : ' +
-                    ' Reconnaître les lettres ' + taskLetters.join(' - ')))
-                levelRoot.appendChild(header)
+                    ' Reconnaître les lettres ' + tasktaskLetters
+                    .join(' - ')))
 
+                div.append(header)
                 linkNode = document.createElement('a')
                 linkNode.appendChild(document.createTextNode('Démarrer le niveau !'))
                 linkNode.href = "#game"
                 linkNode.addEventListener('click', function(e) {
                     runLevel(chapterIndex, exerciseIndex)
                 })
-                levelRoot.appendChild(linkNode)
+                linkNode.className = 'start-game'
+                div.appendChild(linkNode)
 
             } else {
                 console.log('Could not recognize task type: ' + taskType);
@@ -138,9 +151,38 @@ function setupLevels() {
         root.appendChild(levelRoot);
 
     }
+    hideGameArea()
 }
 
 
 function runLevel(chapterIndex, exerciseIndex) {
+    // starts a new level defined by chapter and exercise index
     console.log(`Running chapter ${chapterIndex} exercise ${exerciseIndex}`)
+
+    exercise = LEVELS[chapterIndex][exerciseIndex]
+    taskType = exercise[0];
+    taskLetters = exercise[1];
+    if (taskType == 'recognition') {
+        document.getElementById('game-area').hidden = false;
+        document.getElementById('game-area').currentLevel = [chapterIndex, exerciseIndex]
+        document.getElementById('game-area').taskLetters = taskLetters
+        buttonArea = document.getElementById('button-area');
+        // clearing old children
+        while (buttonArea.firstChild) {
+            buttonArea.removeChild(buttonArea.firstChild);
+        }
+        // adding a button for each letter in the current level
+        for (let i = 0; i < taskLetters
+            .length; i++) {
+            button = document.createElement('button');
+            button.innerHTML = taskLetters[i];
+            button.className = 'quizz-button';
+            buttonArea.appendChild(button);
+            button.addEventListener("click", checkAnswer);
+        }
+        // initializing quizz data
+        document.getElementById('game-area').quizzData = { 'total': 32, 'correct': 0, 'incorrect': 0 };
+        // generating a new quizz question
+        generateNewQuestion();
+    }
 }
