@@ -80,9 +80,9 @@ function generateNewQuestion() {
     cArabic.clearRect(0, 0, c.width, c.height);
     cArabic.font = "400px Arial";
     cArabic.textAlign = 'center';
-    cArabic.fillText(randomLetter, c.width / 2., c.height * 4 / 5.);
+    cArabic.textBaseline = 'bottom';
+    cArabic.fillText(randomLetter, c.width / 2., c.height);
     document.getElementById('game-area').answer = randomAnswer;
-
     // update progress bar
     updateQuizzProgressBar();
 
