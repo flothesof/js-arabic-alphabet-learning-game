@@ -80,6 +80,7 @@ canvas {
     margin-right: auto;
     display: block;
     touch-action: none;
+    background-color: #d8d8d8;
 }
 
 

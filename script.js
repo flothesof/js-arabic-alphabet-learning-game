@@ -129,6 +129,15 @@ function clearCanvas() {
     var canvas = document.getElementById("myCanvas");
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let sketcher = document.getElementById('game-area').sketcher;
+    sketcher.handler(function(elem, data) {
+        data.sketch.beginPath()
+            .lineStyle('green', 3)
+            .line(0, 200, 500, 200)
+            .stroke()
+            .closePath()
+    });
+
 }
 
 function drawLetterOnCanvas(randomLetter, clearBeforeDrawing = true) {
@@ -172,6 +181,9 @@ function toggleGameAreaModal() {
         // indexOf returns -1 when the string is not found
         gameArea.className = gameArea.className.replace('open', '');
         enableScroll();
+        let sketcher = document.getElementById('game-area').sketcher;
+        // deactivate interactive drawing when modal dialog is closed
+        sketcher.config({ 'interactive': false })
     } else {
         // the else here means that the string was not found
         gameArea.className = gameArea.className + ' open';
