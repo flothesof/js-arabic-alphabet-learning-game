@@ -37,6 +37,138 @@ function randInt(N) {
     return Math.floor(Math.random() * N);
 }
 
+var strokesCorrectAnswer = [
+    [
+        [181, 121],
+        [184, 123],
+        [185, 126],
+        [187, 128],
+        [189, 131],
+        [192, 134],
+        [195, 138],
+        [197, 140],
+        [199, 143],
+        [201, 145],
+        [203, 148],
+        [205, 149],
+        [206, 151],
+        [208, 152],
+        [209, 154],
+        [210, 155],
+        [211, 156],
+        [213, 158],
+        [214, 159],
+        [215, 161],
+        [216, 161],
+        [217, 162],
+        [217, 163],
+        [218, 163],
+        [218, 164],
+        [219, 164],
+        [219, 162],
+        [221, 159],
+        [223, 155],
+        [225, 151],
+        [227, 147],
+        [229, 143],
+        [230, 139],
+        [232, 136],
+        [234, 133],
+        [236, 129],
+        [237, 125],
+        [239, 122],
+        [243, 117],
+        [246, 113],
+        [249, 109],
+        [252, 104],
+        [255, 101],
+        [258, 97],
+        [260, 93],
+        [263, 88],
+        [267, 83],
+        [270, 78],
+        [271, 72],
+        [273, 69],
+        [275, 64],
+        [276, 62],
+        [276, 61],
+        [277, 60],
+        [277, 59],
+        [277, 59],
+        [277, 59]
+    ],
+];
+
+var strokesIncorrectAnswer = [
+    [
+        [176, 62],
+        [178, 62],
+        [183, 64],
+        [188, 69],
+        [196, 75],
+        [204, 81],
+        [218, 92],
+        [230, 100],
+        [240, 107],
+        [249, 113],
+        [256, 118],
+        [261, 122],
+        [267, 128],
+        [272, 133],
+        [275, 137],
+        [277, 141],
+        [280, 145],
+        [281, 146],
+        [282, 148],
+        [283, 148],
+        [283, 149],
+        [283, 149],
+        [283, 149],
+        [284, 150],
+        [286, 151],
+        [287, 152],
+        [288, 152],
+        [289, 153],
+        [290, 153],
+        [290, 154]
+    ],
+    [
+        [172, 160],
+        [172, 159],
+        [172, 157],
+        [174, 153],
+        [177, 149],
+        [183, 142],
+        [188, 136],
+        [192, 131],
+        [197, 124],
+        [201, 121],
+        [205, 116],
+        [208, 112],
+        [212, 108],
+        [216, 104],
+        [219, 101],
+        [223, 98],
+        [227, 94],
+        [233, 90],
+        [235, 88],
+        [240, 84],
+        [243, 81],
+        [250, 75],
+        [256, 70],
+        [261, 66],
+        [264, 62],
+        [269, 58],
+        [274, 54],
+        [277, 51],
+        [280, 48],
+        [282, 47],
+        [283, 46],
+        [283, 46],
+        [284, 46]
+    ]
+]
+
 /* disable scrolling helper functions based on https://stackoverflow.com/questions/4770025/how-to-disable-scrolling-temporarily */
 
 // left: 37, up: 38, right: 39, down: 40,
@@ -83,6 +215,10 @@ function enableScroll() {
     window.removeEventListener('keydown', preventDefaultForScrollKeys, false);
 }
 
+
+/**
+ * Actual game logic starts here.
+ */
 
 function updateQuizzProgressBar() {
     // updates progress bar
@@ -143,6 +279,7 @@ function drawLetterOnCanvas(randomLetter, clearBeforeDrawing = true) {
     var canvas = document.getElementById("myCanvas");
     var ctx = canvas.getContext("2d");
     ctx.font = "280px Amiri";
+    ctx.fillStyle = 'black';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(randomLetter, canvas.width / 2., canvas.height / 2.);
@@ -152,12 +289,39 @@ function checkRecognitionAnswer(e) {
     var quizzData = document.getElementById('game-area').quizzData;
     if (quizzData['correct'] + quizzData['incorrect'] < quizzData['total']) {
         var caller = e.target || e.srcElement;
+
         if (document.getElementById('game-area').answer == caller.innerHTML) {
             document.getElementById('game-area').quizzData['correct'] += 1;
+            // eslint-disable-next-line no-undef
+            let sketcher = new Sketchable(document.getElementById('myCanvas'), {
+                graphics: {
+                    firstPointSize: 5,
+                    lineWidth: 10,
+                    strokeStyle: 'green',
+                }
+            });
+
+            sketcher.strokes(strokesCorrectAnswer)
+                .clear(true)
+                .animate.strokes()
         } else {
             document.getElementById('game-area').quizzData['incorrect'] += 1;
+            // eslint-disable-next-line no-undef
+            let sketcher = new Sketchable(document.getElementById('myCanvas'), {
+                graphics: {
+                    firstPointSize: 5,
+                    lineWidth: 10,
+                    strokeStyle: 'red',
+                }
+            });
+            sketcher.strokes(strokesIncorrectAnswer)
+                .clear(true)
+                .animate.strokes()
         }
-        generateNewRecognitionQuestion();
+
+
+        setTimeout(generateNewRecognitionQuestion, 1500);
+
     } else {
         updateQuizzProgressBar();
         var chapter, exercise, correct, incorrect;
