@@ -20,13 +20,24 @@
     <h1>Niveaux</h1>
     <div id="levels-container"></div>
 
-    <div id="game-area">
-        <a name="game"></a>
-        <div id="progress-bar"></div>
-        <canvas id="myCanvas" dir="rtl" width="400" height="400" style="border:1px solid #d3d3d3;">
-            Your browser does not support the HTML5 canvas tag.
-          </canvas>
-        <div id="button-area"></div>
+    <div class="modal" id='game-area'>
+        <div class="modal__header">
+            <button icon="icon" onclick="toggleGameAreaModal()">
+                <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd">
+                    <path d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z">
+                    </path>
+                </svg>
+            </button>
+            <div id="progress-bar"></div>
+        </div>
+        <div class="modal__content">
+            <canvas id="myCanvas" dir="rtl" width="400" height="400" style="border:1px solid #d3d3d3;">
+                Your browser does not support the HTML5 canvas tag.
+              </canvas>
+        </div>
+        <div class="modal__footer">
+            <div id="button-area"></div>
+        </div>
     </div>
 
     <script src="script.js"></script>

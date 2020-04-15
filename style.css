@@ -6,7 +6,6 @@ body {
 
 .exercise {
     padding: 2em;
-    width: 25em;
     margin: 2em;
     border: 1px solid #808080;
     border-radius: 0.5em;
@@ -31,16 +30,17 @@ body {
 }
 
 #game-area {
-    padding: 2em;
-    margin: 2em;
+    margin: 0 auto;
     background-color: #eeeeee;
-    width: 25em;
+    max-width: 100%;
 }
 
 #progress-bar {
     border: 2px solid black;
     text-align: center;
-    margin: 0.1em;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 500px;
 }
 
 .quizz-button {
@@ -70,4 +70,33 @@ details em {
 summary {
     margin-top: 1em;
     margin-bottom: 1em;
+}
+
+canvas {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+
+/* style for the modal part of the app */
+
+.modal {
+    display: none;
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+.modal.open {
+    display: grid;
+    grid-template-rows: 100px auto 100px;
+}
+
+.modal__content {
+    overflow-y: auto;
 }

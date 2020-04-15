@@ -118,8 +118,23 @@ function checkRecognitionAnswer(e) {
 
 
 
-function hideGameArea() {
-    document.getElementById('game-area').hidden = true;
+function toggleGameAreaModal() {
+    var gameArea = document.getElementById('game-area');
+
+    if (gameArea.className.indexOf('open') > -1) {
+        // indexOf returns -1 when the string is not found,
+        // therefore 'theWall' is found if the index is
+        // greater than -1; so 'theWall' is 'open', so here
+        // we close it:
+        gameArea.className = gameArea.className.replace('open', '');
+    } else {
+        // the else here means that the string was not found,
+        // returning an index of -1 (or, technically, -1 or less;
+        // but indexOf only returns -1, 0 or positive indexes.
+        // so the string was not found, means the 'theWall' is
+        // 'closed' and so must be opened:
+        gameArea.className = gameArea.className + ' open';
+    }
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -197,8 +212,8 @@ function setupLevels() {
         root.appendChild(levelRoot);
 
     }
-    hideGameArea()
-        // eslint-disable-next-line no-undef
+
+    // eslint-disable-next-line no-undef
     var sketcher = new Sketchable(document.getElementById('myCanvas'));
     sketcher.config({ 'interactive': false });
     // keep reference for later
@@ -219,7 +234,7 @@ function runLevel(chapterIndex, exerciseIndex) {
     /**
      * Starts a new level defined by chapter and exercise index.
      */
-
+    toggleGameAreaModal();
     var exercise = LEVELS[chapterIndex][exerciseIndex]
     var taskType = exercise[0];
     var taskLetters = exercise[1];
