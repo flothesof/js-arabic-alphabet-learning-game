@@ -1,24 +1,20 @@
-const reverseMapping = o => Object.keys(o).reduce((r, k) =>
-    Object.assign(r, {
-        [o[k]]: (r[o[k]] || []).concat(k)
-    }), {})
-
-function decodeHtml(html) {
-    var txt = document.createElement("textarea");
-    txt.innerHTML = html;
-    return txt.value;
-}
-
 const STAR_MAPPING = {
-    5: decodeHtml('&#9733&#9733&#9733&#9733&#9733'),
-    4: decodeHtml('&#9733&#9733&#9733&#9733&#9734'),
-    3: decodeHtml('&#9733&#9733&#9733&#9734&#9734'),
-    2: decodeHtml('&#9733&#9733&#9734&#9734&#9734'),
-    1: decodeHtml('&#9733&#9734&#9734&#9734&#9734'),
-    0: decodeHtml('&#9734&#9734&#9734&#9734&#9734')
+    5: '\u2605\u2605\u2605\u2605\u2605',
+    4: '\u2605\u2605\u2605\u2605\u2606',
+    3: '\u2605\u2605\u2605\u2606\u2606',
+    2: '\u2605\u2605\u2606\u2606\u2606',
+    1: '\u2605\u2606\u2606\u2606\u2606',
+    0: '\u2606\u2606\u2606\u2606\u2606'
 }
 
-const REVERSE_STAR_MAPPING = reverseMapping(STAR_MAPPING);
+const REVERSE_STAR_MAPPING = {
+    '\u2605\u2605\u2605\u2605\u2605': 5,
+    '\u2605\u2605\u2605\u2605\u2606': 4,
+    '\u2605\u2605\u2605\u2606\u2606': 3,
+    '\u2605\u2605\u2606\u2606\u2606': 2,
+    '\u2605\u2606\u2606\u2606\u2606': 1,
+    '\u2606\u2606\u2606\u2606\u2606': 0
+}
 
 const LETTER_MAPPING = { 'a': 'ا', 'ou': 'و', 'i': 'ي', 'nou': 'ن', 'ha': 'ه', 'd': 'د', 'r': 'ر', 't': 'ت', 'b': 'ب', 'th': 'ث' }
 
@@ -132,7 +128,7 @@ function clearCanvas() {
     let sketcher = document.getElementById('game-area').sketcher;
     sketcher.handler(function(elem, data) {
         data.sketch.beginPath()
-            .lineStyle('green', 3)
+            .lineStyle('gray', 3)
             .line(0, 200, 500, 200)
             .stroke()
             .closePath()
@@ -363,7 +359,7 @@ function runLevel(chapterIndex, exerciseIndex) {
 
 function updateStarRating(chapterIndex, exerciseIndex, correct) {
     // updates the score rating
-    let score
+    let score;
     if (correct == 32) {
         score = 5
     } else if (correct >= 30) {
@@ -378,8 +374,8 @@ function updateStarRating(chapterIndex, exerciseIndex, correct) {
         score = 0
     }
     let previousStars = document.getElementById(`score-chapter${chapterIndex}-exercise${exerciseIndex}`).innerHTML.split('Score : ')[1]
-    let currentScore = REVERSE_STAR_MAPPING[previousStars]
-    if (currentScore < score) {
+    let previousScore = REVERSE_STAR_MAPPING[previousStars]
+    if (previousScore < score) {
         document.getElementById(`score-chapter${chapterIndex}-exercise${exerciseIndex}`).innerHTML = 'Score : ' + STAR_MAPPING[score]
     }
 
