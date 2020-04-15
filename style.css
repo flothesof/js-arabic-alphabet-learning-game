@@ -81,7 +81,8 @@ canvas {
 }
 
 
-/* style for the modal part of the app */
+/* style for the modal part of the app 
+inspired by https://medium.com/@andrejsabrickis/a-fullscreen-modal-with-fixed-header-footer-and-a-scrollable-content-1656845c8171 */
 
 .modal {
     display: none;
