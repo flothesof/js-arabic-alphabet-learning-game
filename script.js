@@ -18,7 +18,7 @@ const STAR_MAPPING = {
     0: decodeHtml('&#9734&#9734&#9734&#9734&#9734')
 }
 
-REVERSE_STAR_MAPPING = reverseMapping(STAR_MAPPING);
+const REVERSE_STAR_MAPPING = reverseMapping(STAR_MAPPING);
 
 const LETTER_MAPPING = { 'a': 'ا', 'ou': 'و', 'i': 'ي', 'nou': 'ن', 'ha': 'ه', 'd': 'د', 'r': 'ر', 't': 'ت', 'b': 'ب', 'th': 'ث' }
 
@@ -43,32 +43,28 @@ function randInt(N) {
 
 function updateQuizzProgressBar() {
     // updates progress bar
-    quizzData = document.getElementById('game-area').quizzData;
-    progressBar = document.getElementById('progress-bar');
+    var quizzData = document.getElementById('game-area').quizzData;
+    var progressBar = document.getElementById('progress-bar');
     progressBar.innerHTML = 'Question : ' + (quizzData['correct'] + quizzData['incorrect']) + '/' + quizzData['total'] + ' | Correctes : ' + quizzData['correct'] + '/' + (quizzData['correct'] + quizzData['incorrect']);
 }
 
 function generateNewRecognitionQuestion() {
     // sets up a new question
-    level = document.getElementById('game-area').current_level;
-    taskLetters
-        = document.getElementById('game-area').taskLetters
-    quizzData = document.getElementById('game-area').quizzData;
+    var taskLetters = document.getElementById('game-area').taskLetters
 
     if (document.getElementById('game-area').hasAttributes('answer')) {
         // generate a new random letter that is not the same as the previous one
-        previousValue = document.getElementById('game-area').answer;
-        possibletaskLetters
-            = taskLetters
-            .filter(function(value, index, arr) { return value != previousValue; });
+        var previousValue = document.getElementById('game-area').answer;
+        var possibletaskLetters = taskLetters
+            .filter(function(value) { return value != previousValue; });
         randomAnswer = possibletaskLetters[randInt(possibletaskLetters
             .length)];
         randomLetter = LETTER_MAPPING[randomAnswer];
     } else {
         // generate any new random letter the first time we start the game
-        randomAnswer = taskLetters[randInt(taskLetters
+        var randomAnswer = taskLetters[randInt(taskLetters
             .length)];
-        randomLetter = LETTER_MAPPING[randomAnswer];
+        var randomLetter = LETTER_MAPPING[randomAnswer];
 
     }
     // saving the new answer for later
@@ -101,7 +97,7 @@ function drawLetterOnCanvas(randomLetter, clearBeforeDrawing = true) {
 }
 
 function checkRecognitionAnswer(e) {
-    quizzData = document.getElementById('game-area').quizzData;
+    var quizzData = document.getElementById('game-area').quizzData;
     if (quizzData['correct'] + quizzData['incorrect'] < quizzData['total']) {
         var caller = e.target || e.srcElement;
         if (document.getElementById('game-area').answer == caller.innerHTML) {
@@ -112,6 +108,7 @@ function checkRecognitionAnswer(e) {
         generateNewRecognitionQuestion();
     } else {
         updateQuizzProgressBar();
+        var chapter, exercise, correct, incorrect;
         [chapter, exercise] = document.getElementById('game-area').currentLevel;
         [correct, incorrect] = [quizzData['correct'], quizzData['incorrect']]
         updateStarRating(chapter, exercise, correct, incorrect)
@@ -124,41 +121,42 @@ function hideGameArea() {
     document.getElementById('game-area').hidden = true;
 }
 
+// eslint-disable-next-line no-unused-vars
 function setupLevels() {
     // parse level descriptions and build nested level layout
-    root = document.getElementById('levels-container');
+    var root = document.getElementById('levels-container');
     for (let chapterIndex in LEVELS) {
-        levelRoot = document.createElement('details');
-        levelSummary = document.createElement('summary');
-        levelHeader = document.createElement('em')
+        var levelRoot = document.createElement('details');
+        var levelSummary = document.createElement('summary');
+        var levelHeader = document.createElement('em')
         levelHeader.innerHTML = 'Chapitre ' + (parseInt(chapterIndex) + 1);
         levelSummary.appendChild(levelHeader)
         levelRoot.appendChild(levelSummary)
         for (let exerciseIndex in LEVELS[chapterIndex]) {
-            items = LEVELS[chapterIndex][exerciseIndex]
-            taskType = items[0];
-            tasktaskLetters
-                = items[1];
+            var items = LEVELS[chapterIndex][exerciseIndex]
+            var taskType = items[0];
+            var tasktaskLetters = items[1];
             if (taskType == 'recognition') {
-                div = document.createElement('div')
+                var div = document.createElement('div')
                 levelRoot.appendChild(div)
                 div.className = 'exercise'
-                header = document.createElement('h3')
+                var header = document.createElement('h3')
                 header.appendChild(document.createTextNode('Exercice ' + (parseInt(chapterIndex) + 1) + '.' + (parseInt(exerciseIndex) + 1) + ' : ' +
                     ' Reconnaître les lettres ' + tasktaskLetters
                     .join(' - ')))
 
                 div.append(header)
-                linkNode = document.createElement('a')
+                var linkNode = document.createElement('a')
                 linkNode.appendChild(document.createTextNode('Démarrer le niveau !'))
                 linkNode.href = "#game"
+                    // eslint-disable-next-line no-unused-vars
                 linkNode.addEventListener('click', function(e) {
                     runLevel(chapterIndex, exerciseIndex)
                 })
                 linkNode.className = 'start-game'
                 div.appendChild(linkNode)
 
-                stars = document.createElement('div')
+                var stars = document.createElement('div')
                 stars.innerHTML = 'Score : ' + STAR_MAPPING[0]
                 stars.id = `score-chapter${chapterIndex}-exercise${exerciseIndex}`
                 div.appendChild(stars)
@@ -176,6 +174,7 @@ function setupLevels() {
                 linkNode = document.createElement('a')
                 linkNode.appendChild(document.createTextNode('Démarrer le niveau !'))
                 linkNode.href = "#game"
+                    // eslint-disable-next-line no-unused-vars
                 linkNode.addEventListener('click', function(e) {
                     runLevel(chapterIndex, exerciseIndex)
                 })
@@ -195,6 +194,7 @@ function setupLevels() {
 
     }
     hideGameArea()
+        // eslint-disable-next-line no-undef
     var sketcher = new Sketchable(document.getElementById('myCanvas'));
     sketcher.config({ 'interactive': false });
     // keep reference for later
@@ -212,17 +212,18 @@ function setupLevels() {
 
 
 function runLevel(chapterIndex, exerciseIndex) {
-    // starts a new level defined by chapter and exercise index
-    console.log(`Running chapter ${chapterIndex} exercise ${exerciseIndex}`)
+    /**
+     * Starts a new level defined by chapter and exercise index.
+     */
 
-    exercise = LEVELS[chapterIndex][exerciseIndex]
-    taskType = exercise[0];
-    taskLetters = exercise[1];
+    var exercise = LEVELS[chapterIndex][exerciseIndex]
+    var taskType = exercise[0];
+    var taskLetters = exercise[1];
     if (taskType == 'recognition') {
         document.getElementById('game-area').hidden = false;
         document.getElementById('game-area').currentLevel = [chapterIndex, exerciseIndex]
         document.getElementById('game-area').taskLetters = taskLetters
-        buttonArea = document.getElementById('button-area');
+        var buttonArea = document.getElementById('button-area');
         // clearing old children
         while (buttonArea.firstChild) {
             buttonArea.removeChild(buttonArea.firstChild);
@@ -230,7 +231,7 @@ function runLevel(chapterIndex, exerciseIndex) {
         // adding a button for each letter in the current level
         for (let i = 0; i < taskLetters
             .length; i++) {
-            button = document.createElement('button');
+            let button = document.createElement('button');
             button.innerHTML = taskLetters[i];
             button.className = 'quizz-button';
             buttonArea.appendChild(button);
@@ -252,11 +253,11 @@ function runLevel(chapterIndex, exerciseIndex) {
         }
         // creating buttons / text regions for drawing interactions 
 
-        p = document.createElement('p');
+        let p = document.createElement('p');
         p.id = 'drawing-text-area';
         buttonArea.appendChild(p);
 
-        button = document.createElement('button');
+        let button = document.createElement('button');
         button.innerHTML = 'Montrer';
         button.id = 'drawing-show-answer';
         button.className = 'quizz-button';
@@ -287,8 +288,9 @@ function runLevel(chapterIndex, exerciseIndex) {
     }
 }
 
-function updateStarRating(chapterIndex, exerciseIndex, correct, incorrect) {
+function updateStarRating(chapterIndex, exerciseIndex, correct) {
     // updates the score rating
+    let score
     if (correct == 32) {
         score = 5
     } else if (correct >= 30) {
@@ -302,10 +304,10 @@ function updateStarRating(chapterIndex, exerciseIndex, correct, incorrect) {
     } else {
         score = 0
     }
-    previousStars = document.getElementById(`score-chapter${chapter}-exercise${exerciseIndex}`).innerHTML.split('Score : ')[1]
-    currentScore = REVERSE_STAR_MAPPING[previousStars]
+    let previousStars = document.getElementById(`score-chapter${chapterIndex}-exercise${exerciseIndex}`).innerHTML.split('Score : ')[1]
+    let currentScore = REVERSE_STAR_MAPPING[previousStars]
     if (currentScore < score) {
-        document.getElementById(`score-chapter${chapter}-exercise${exerciseIndex}`).innerHTML = 'Score : ' + STAR_MAPPING[score]
+        document.getElementById(`score-chapter${chapterIndex}-exercise${exerciseIndex}`).innerHTML = 'Score : ' + STAR_MAPPING[score]
     }
 
 }
@@ -313,24 +315,21 @@ function updateStarRating(chapterIndex, exerciseIndex, correct, incorrect) {
 function generateNewDrawingQuestion() {
     // generates a new question for a drawing task
 
-    taskLetters
-        = document.getElementById('game-area').taskLetters
-    quizzData = document.getElementById('game-area').quizzData;
-
+    let taskLetters = document.getElementById('game-area').taskLetters
+    let randomAnswer
     if (document.getElementById('game-area').hasAttributes('answer')) {
         // generate a new random letter that is not the same as the previous one
-        previousValue = document.getElementById('game-area').answer;
-        possibletaskLetters
-            = taskLetters
-            .filter(function(value, index, arr) { return value != previousValue; });
+        let previousValue = document.getElementById('game-area').answer;
+        let possibletaskLetters = taskLetters
+            .filter(function(value) { return value != previousValue; });
         randomAnswer = possibletaskLetters[randInt(possibletaskLetters
             .length)];
-        randomLetter = LETTER_MAPPING[randomAnswer];
+
     } else {
         // generate any new random letter the first time we start the game
         randomAnswer = taskLetters[randInt(taskLetters
             .length)];
-        randomLetter = LETTER_MAPPING[randomAnswer];
+
 
     }
     // saving the new answer for later
@@ -356,7 +355,7 @@ function showDrawingAnswer(e) {
 
 
     // displays the expected letter on the canvas and allows the user to validate his answer
-    quizzData = document.getElementById('game-area').quizzData;
+    let quizzData = document.getElementById('game-area').quizzData;
     if (quizzData['correct'] + quizzData['incorrect'] < quizzData['total']) {
         drawLetterOnCanvas(LETTER_MAPPING[document.getElementById('game-area').answer], false);
         document.getElementById('drawing-correct-answer').disabled = false;
@@ -364,9 +363,9 @@ function showDrawingAnswer(e) {
         document.getElementById('drawing-show-answer').disabled = true;
     } else {
         updateQuizzProgressBar();
-        [chapter, exercise] = document.getElementById('game-area').currentLevel;
-        [correct, incorrect] = [quizzData['correct'], quizzData['incorrect']]
-        updateStarRating(chapter, exercise, correct, incorrect)
+        let chapter, exercise, correct;
+        correct = quizzData['correct'];
+        updateStarRating(chapter, exercise, correct)
     }
 }
 
@@ -377,6 +376,5 @@ function validateDrawingAnswer(e) {
     } else {
         document.getElementById('game-area').quizzData['incorrect'] += 1;
     }
-
     generateNewDrawingQuestion();
 }
