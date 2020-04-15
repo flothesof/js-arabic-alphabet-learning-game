@@ -63,6 +63,10 @@ details em {
     font-style: normal;
 }
 
+.chapter-progress {
+    font-size: initial;
+}
+
 summary {
     margin-top: 1em;
     margin-bottom: 1em;

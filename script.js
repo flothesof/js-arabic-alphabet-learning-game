@@ -112,6 +112,7 @@ function checkRecognitionAnswer(e) {
         [chapter, exercise] = document.getElementById('game-area').currentLevel;
         [correct, incorrect] = [quizzData['correct'], quizzData['incorrect']]
         updateStarRating(chapter, exercise, correct, incorrect)
+        updateChapterProgress();
     }
 }
 
@@ -123,13 +124,16 @@ function hideGameArea() {
 
 // eslint-disable-next-line no-unused-vars
 function setupLevels() {
-    // parse level descriptions and build nested level layout
+    /**
+     * Parse level descriptions and build nested level layout.
+     */
     var root = document.getElementById('levels-container');
     for (let chapterIndex in LEVELS) {
         var levelRoot = document.createElement('details');
         var levelSummary = document.createElement('summary');
         var levelHeader = document.createElement('em')
         levelHeader.innerHTML = 'Chapitre ' + (parseInt(chapterIndex) + 1);
+        levelHeader.innerHTML += ` <span class="chapter-progress" id="chapter-progress-${chapterIndex}">0%</span>`
         levelSummary.appendChild(levelHeader)
         levelRoot.appendChild(levelSummary)
         for (let exerciseIndex in LEVELS[chapterIndex]) {
@@ -173,8 +177,8 @@ function setupLevels() {
                 div.append(header)
                 linkNode = document.createElement('a')
                 linkNode.appendChild(document.createTextNode('Démarrer le niveau !'))
-                linkNode.href = "#game"
-                    // eslint-disable-next-line no-unused-vars
+                linkNode.href = "#game";
+                // eslint-disable-next-line no-unused-vars
                 linkNode.addEventListener('click', function(e) {
                     runLevel(chapterIndex, exerciseIndex)
                 })
@@ -335,11 +339,11 @@ function generateNewDrawingQuestion() {
     // saving the new answer for later
     document.getElementById('game-area').answer = randomAnswer;
 
+    // writing new drawing question
     document.getElementById('drawing-text-area').innerHTML = 'La lettre à dessiner est : ' + randomAnswer;
-
     updateQuizzProgressBar();
 
-    var sketcher = document.getElementById('game-area').sketcher;
+    let sketcher = document.getElementById('game-area').sketcher;
     sketcher.config({ 'interactive': true });
     document.getElementById('drawing-show-answer').disabled = false;
     document.getElementById('drawing-correct-answer').disabled = true;
@@ -350,10 +354,6 @@ function generateNewDrawingQuestion() {
 }
 
 function showDrawingAnswer(e) {
-    var caller = e.target || e.srcElement;
-    console.log('showDrawingAnswer has just been called by ' + caller + ' who has an id ' + caller.id);
-
-
     // displays the expected letter on the canvas and allows the user to validate his answer
     let quizzData = document.getElementById('game-area').quizzData;
     if (quizzData['correct'] + quizzData['incorrect'] < quizzData['total']) {
@@ -366,6 +366,7 @@ function showDrawingAnswer(e) {
         let chapter, exercise, correct;
         correct = quizzData['correct'];
         updateStarRating(chapter, exercise, correct)
+        updateChapterProgress();
     }
 }
 
@@ -377,4 +378,23 @@ function validateDrawingAnswer(e) {
         document.getElementById('game-area').quizzData['incorrect'] += 1;
     }
     generateNewDrawingQuestion();
+}
+
+// eslint-disable-next-line no-unused-vars
+function updateChapterProgress() {
+    /**
+     * Updates the HTML headers of each chapters in percentage.
+     */
+    for (let chapterIndex in LEVELS) {
+        let nExercices = LEVELS[chapterIndex].length;
+        let aboveThreeStars = 0;
+        for (let exerciseIndex in LEVELS[chapterIndex]) {
+            let previousStars = document.getElementById(`score-chapter${chapterIndex}-exercise${exerciseIndex}`).innerHTML.split('Score : ')[1];
+            let currentScore = REVERSE_STAR_MAPPING[previousStars]
+            if (currentScore > 3) {
+                aboveThreeStars += 1;
+            }
+        }
+        document.getElementById(`chapter-progress-${chapterIndex}`).innerHTML = `${Math.round(aboveThreeStars/ nExercices * 100)}%`
+    }
 }
