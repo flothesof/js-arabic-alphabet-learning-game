@@ -62,8 +62,10 @@ function preventDefaultForScrollKeys(e) {
 var supportsPassive = false;
 try {
     window.addEventListener("test", null, Object.defineProperty({}, 'passive', {
+        // eslint-disable-next-line getter-return
         get: function() { supportsPassive = true; }
     }));
+    // eslint-disable-next-line no-empty
 } catch (e) {}
 
 var wheelOpt = supportsPassive ? { passive: false } : false;
@@ -167,18 +169,11 @@ function toggleGameAreaModal() {
     var gameArea = document.getElementById('game-area');
 
     if (gameArea.className.indexOf('open') > -1) {
-        // indexOf returns -1 when the string is not found,
-        // therefore 'theWall' is found if the index is
-        // greater than -1; so 'theWall' is 'open', so here
-        // we close it:
+        // indexOf returns -1 when the string is not found
         gameArea.className = gameArea.className.replace('open', '');
         enableScroll();
     } else {
-        // the else here means that the string was not found,
-        // returning an index of -1 (or, technically, -1 or less;
-        // but indexOf only returns -1, 0 or positive indexes.
-        // so the string was not found, means the 'theWall' is
-        // 'closed' and so must be opened:
+        // the else here means that the string was not found
         gameArea.className = gameArea.className + ' open';
         disableScroll();
     }
