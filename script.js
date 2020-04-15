@@ -318,21 +318,33 @@ function checkRecognitionAnswer(e) {
                 .clear(true)
                 .animate.strokes()
         }
-
-
         setTimeout(generateNewRecognitionQuestion, 1500);
 
     } else {
-        updateQuizzProgressBar();
-        var chapter, exercise, correct, incorrect;
-        [chapter, exercise] = document.getElementById('game-area').currentLevel;
-        [correct, incorrect] = [quizzData['correct'], quizzData['incorrect']]
-        updateStarRating(chapter, exercise, correct, incorrect)
-        updateChapterProgress();
+        // this exercise is now finished
+        finishExercise(quizzData);
     }
 }
 
+function finishExercise(quizzData) {
+    /**  The game is finished: display dialog and update main interface.
+     * 
+     * */
+    var chapter, exercise, correct, incorrect;
+    [correct, incorrect] = [quizzData['correct'], quizzData['incorrect']];
+    [chapter, exercise] = document.getElementById('game-area').currentLevel;
+    let starScore = updateStarRating(chapter, exercise, correct, incorrect);
+    document.getElementById('myCanvas').style.display = "none";
+    let infoBox = document.getElementById('canvas-data');
+    infoBox.hidden = false;
+    infoBox.innerHTML = `Bravo ! Vous venez de finir cet exercice. <br> Vous avez donné ${correct} bonne(s) réponse(s) et ${incorrect} mauvaise(s) réponse(s). <br> Votre score est de ${starScore}.`
 
+    updateQuizzProgressBar();
+    updateChapterProgress();
+    // if it's a drawing exercise we also disable the bottom buttons
+    document.getElementById('drawing-correct-answer').disabled = true;
+    document.getElementById('drawing-incorrect-answer').disabled = true;
+}
 
 function toggleGameAreaModal() {
     var gameArea = document.getElementById('game-area');
@@ -379,14 +391,13 @@ function setupLevels() {
                     .join(' - ')))
 
                 div.append(header)
-                var linkNode = document.createElement('a')
+                var linkNode = document.createElement('button')
                 linkNode.appendChild(document.createTextNode('Démarrer le niveau !'))
-                linkNode.href = "#game"
                     // eslint-disable-next-line no-unused-vars
                 linkNode.addEventListener('click', function(e) {
                     runLevel(chapterIndex, exerciseIndex)
                 })
-                linkNode.className = 'start-game'
+                linkNode.className = 'start-game ' + `start-chapter${chapterIndex}`
                 div.appendChild(linkNode)
 
                 var stars = document.createElement('div')
@@ -404,14 +415,13 @@ function setupLevels() {
                     .join(' - ')))
 
                 div.append(header)
-                linkNode = document.createElement('a')
+                linkNode = document.createElement('button')
                 linkNode.appendChild(document.createTextNode('Démarrer le niveau !'))
-                linkNode.href = "#game";
-                // eslint-disable-next-line no-unused-vars
+                    // eslint-disable-next-line no-unused-vars
                 linkNode.addEventListener('click', function(e) {
                     runLevel(chapterIndex, exerciseIndex)
                 })
-                linkNode.className = 'start-game'
+                linkNode.className = 'start-game ' + `start-chapter${chapterIndex}`;
                 div.appendChild(linkNode)
 
                 stars = document.createElement('div')
@@ -449,6 +459,8 @@ function runLevel(chapterIndex, exerciseIndex) {
      * Starts a new level defined by chapter and exercise index.
      */
     toggleGameAreaModal();
+    document.getElementById('myCanvas').style.display = "block";
+    document.getElementById('canvas-data').hidden = true;
     var exercise = LEVELS[chapterIndex][exerciseIndex]
     var taskType = exercise[0];
     var taskLetters = exercise[1];
@@ -542,7 +554,7 @@ function updateStarRating(chapterIndex, exerciseIndex, correct) {
     if (previousScore < score) {
         document.getElementById(`score-chapter${chapterIndex}-exercise${exerciseIndex}`).innerHTML = 'Score : ' + STAR_MAPPING[score]
     }
-
+    return STAR_MAPPING[score];
 }
 
 function generateNewDrawingQuestion() {
@@ -585,19 +597,12 @@ function generateNewDrawingQuestion() {
 // eslint-disable-next-line no-unused-vars
 function showDrawingAnswer(e) {
     // displays the expected letter on the canvas and allows the user to validate his answer
-    let quizzData = document.getElementById('game-area').quizzData;
-    if (quizzData['correct'] + quizzData['incorrect'] < quizzData['total']) {
-        drawLetterOnCanvas(LETTER_MAPPING[document.getElementById('game-area').answer], false);
-        document.getElementById('drawing-correct-answer').disabled = false;
-        document.getElementById('drawing-incorrect-answer').disabled = false;
-        document.getElementById('drawing-show-answer').disabled = true;
-    } else {
-        updateQuizzProgressBar();
-        let chapter, exercise, correct;
-        correct = quizzData['correct'];
-        updateStarRating(chapter, exercise, correct)
-        updateChapterProgress();
-    }
+
+    drawLetterOnCanvas(LETTER_MAPPING[document.getElementById('game-area').answer], false);
+    document.getElementById('drawing-correct-answer').disabled = false;
+    document.getElementById('drawing-incorrect-answer').disabled = false;
+    document.getElementById('drawing-show-answer').disabled = true;
+
 }
 
 function validateDrawingAnswer(e) {
@@ -607,24 +612,47 @@ function validateDrawingAnswer(e) {
     } else {
         document.getElementById('game-area').quizzData['incorrect'] += 1;
     }
-    generateNewDrawingQuestion();
+    let quizzData = document.getElementById('game-area').quizzData;
+    if (quizzData['correct'] + quizzData['incorrect'] < quizzData['total']) {
+        generateNewDrawingQuestion();
+    } else {
+        // the game is finished: display dialog and update main interface
+        finishExercise(quizzData);
+    }
 }
 
 // eslint-disable-next-line no-unused-vars
 function updateChapterProgress() {
     /**
-     * Updates the HTML headers of each chapters in percentage.
+     * Updates the HTML headers of each chapters in percentage. Also unlocks the chapters as a function of progress.
      */
+    var previousChapterCompleted = true;
     for (let chapterIndex in LEVELS) {
+        // do the unlocking of chapters based on previous value
+        for (let elem of document.getElementsByClassName(`start-chapter${chapterIndex}`)) {
+            if (previousChapterCompleted) {
+                elem.disabled = false;
+            } else {
+                elem.disabled = true;
+            }
+        }
         let exercicesInChapter = LEVELS[chapterIndex].length;
         let aboveThreeStars = 0;
         for (let exerciseIndex in LEVELS[chapterIndex]) {
             let previousStars = document.getElementById(`score-chapter${chapterIndex}-exercise${exerciseIndex}`).innerHTML.split('Score : ')[1];
             let currentScore = REVERSE_STAR_MAPPING[previousStars]
-            if (currentScore > 3) {
+            if (currentScore >= 3) {
                 aboveThreeStars += 1;
             }
         }
-        document.getElementById(`chapter-progress-${chapterIndex}`).innerHTML = `${Math.round(aboveThreeStars/ exercicesInChapter * 100)}%`
+        // update chapter progress
+        document.getElementById(`chapter-progress-${chapterIndex}`).innerHTML = `${Math.round(aboveThreeStars/ exercicesInChapter * 100)}%`;
+
+        // update the completion indicator for setting the next chapters
+        if (aboveThreeStars === exercicesInChapter) {
+            previousChapterCompleted = true;
+        } else  {
+            previousChapterCompleted = false;
+        }
     }
 }
