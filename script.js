@@ -651,7 +651,7 @@ function updateChapterProgress() {
         // update the completion indicator for setting the next chapters
         if (aboveThreeStars === exercicesInChapter) {
             previousChapterCompleted = true;
-        } else  {
+        } else {
             previousChapterCompleted = false;
         }
     }
