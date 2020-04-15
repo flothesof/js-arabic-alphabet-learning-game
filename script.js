@@ -353,6 +353,7 @@ function generateNewDrawingQuestion() {
 
 }
 
+// eslint-disable-next-line no-unused-vars
 function showDrawingAnswer(e) {
     // displays the expected letter on the canvas and allows the user to validate his answer
     let quizzData = document.getElementById('game-area').quizzData;
@@ -386,7 +387,7 @@ function updateChapterProgress() {
      * Updates the HTML headers of each chapters in percentage.
      */
     for (let chapterIndex in LEVELS) {
-        let nExercices = LEVELS[chapterIndex].length;
+        let exercicesInChapter = LEVELS[chapterIndex].length;
         let aboveThreeStars = 0;
         for (let exerciseIndex in LEVELS[chapterIndex]) {
             let previousStars = document.getElementById(`score-chapter${chapterIndex}-exercise${exerciseIndex}`).innerHTML.split('Score : ')[1];
@@ -395,6 +396,6 @@ function updateChapterProgress() {
                 aboveThreeStars += 1;
             }
         }
-        document.getElementById(`chapter-progress-${chapterIndex}`).innerHTML = `${Math.round(aboveThreeStars/ nExercices * 100)}%`
+        document.getElementById(`chapter-progress-${chapterIndex}`).innerHTML = `${Math.round(aboveThreeStars/ exercicesInChapter * 100)}%`
     }
 }
