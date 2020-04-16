@@ -19,6 +19,7 @@ describe("sample test", function () {
     browser = await puppeteer.launch({
       headless: true,
       defaultViewport: null,
+      executablePath: 'google-chrome-unstable',
     });
   });
 
