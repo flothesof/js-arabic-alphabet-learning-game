@@ -1,19 +1,26 @@
 {
-  "name": "js-arabic-alphabet-learning-game",
-  "version": "1.0.0",
-  "description": "A HTML+CSS+JS game to learn the arabic alphabet.",
-  "main": "script.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/flothesof/js-arabic-alphabet-learning-game.git"
-  },
-  "author": "flothesof",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/flothesof/js-arabic-alphabet-learning-game/issues"
-  },
-  "homepage": "https://github.com/flothesof/js-arabic-alphabet-learning-game#readme"
+    "name": "js-arabic-alphabet-learning-game",
+    "version": "1.0.0",
+    "description": "A HTML+CSS+JS game to learn the arabic alphabet.",
+    "main": "script.js",
+    "scripts": {
+        "test": "mocha --recursive test",
+        "server": "http-server ."
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/flothesof/js-arabic-alphabet-learning-game.git"
+    },
+    "author": "flothesof",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/flothesof/js-arabic-alphabet-learning-game/issues"
+    },
+    "homepage": "https://github.com/flothesof/js-arabic-alphabet-learning-game#readme",
+    "dependencies": {
+        "chai": "^4.2.0",
+        "http-server": "^0.12.1",
+        "mocha": "^7.1.1",
+        "puppeteer": "^3.0.0"
+    }
 }
