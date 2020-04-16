@@ -59,6 +59,34 @@ function randInt(N) {
     return Math.floor(Math.random() * N);
 }
 
+function centerStroke(stroke, offsetX, offsetY) {
+    let centers_x = []
+    let centers_y = []
+    for (let curve in stroke) {
+        var xmean = 0;
+        var ymean = 0;
+        for (let point in stroke[curve]) {
+            xmean += stroke[curve][point][0];
+            ymean += stroke[curve][point][1];
+        }
+        xmean /= stroke[curve].length;
+        ymean /= stroke[curve].length;
+        centers_x.push(xmean);
+        centers_y.push(ymean);
+    }
+    var newStroke = []
+    for (let curve in stroke) {
+        var newCurve = []
+        xmean = centers_x[curve] - offsetX;
+        ymean = centers_y[curve] - offsetY;
+        for (let point in stroke[curve]) {
+            newCurve.push([stroke[curve][point][0] - xmean, stroke[curve][point][1] - ymean]);
+        }
+        newStroke.push(newCurve);
+    }
+    return newStroke;
+}
+
 var strokesCorrectAnswer = [
     [
         [181, 121],
@@ -191,6 +219,10 @@ var strokesIncorrectAnswer = [
     ]
 ]
 
+// let's define a global sketch variable
+var sketcher;
+
+
 /* disable scrolling helper functions based on https://stackoverflow.com/questions/4770025/how-to-disable-scrolling-temporarily */
 
 // left: 37, up: 38, right: 39, down: 40,
@@ -283,7 +315,7 @@ function clearCanvas() {
     var canvas = document.getElementById("myCanvas");
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    let sketcher = document.getElementById('game-area').sketcher;
+
     sketcher.handler(function(elem, data) {
         data.sketch.beginPath()
             .lineStyle('gray', 3)
@@ -314,30 +346,37 @@ function validateRecognitionAnswer(e) {
 
         if (document.getElementById('game-area').answer == caller.innerHTML) {
             document.getElementById('game-area').quizzData['correct'] += 1;
-            // eslint-disable-next-line no-undef
-            let sketcher = new Sketchable(document.getElementById('myCanvas'), {
+            sketcher.config({
                 graphics: {
-                    firstPointSize: 5,
-                    lineWidth: 10,
-                    strokeStyle: 'green',
+                    lineWidth: 20,
+                    strokeStyle: 'green'
+                },
+                options: {
+                    interactive: false
                 }
             });
-
-            sketcher.strokes(strokesCorrectAnswer)
-                .clear(true)
+            // clear strokes before adding new ones
+            sketcher.clear()
+            sketcher.strokes(centerStroke(strokesCorrectAnswer,
+                    sketcher.elem.width / 2.,
+                    sketcher.elem.height / 2.))
                 .animate.strokes()
         } else {
             document.getElementById('game-area').quizzData['incorrect'] += 1;
-            // eslint-disable-next-line no-undef
-            let sketcher = new Sketchable(document.getElementById('myCanvas'), {
+            sketcher.config({
                 graphics: {
-                    firstPointSize: 5,
-                    lineWidth: 10,
-                    strokeStyle: 'red',
+                    lineWidth: 20,
+                    strokeStyle: 'red'
+                },
+                options: {
+                    interactive: false
                 }
             });
-            sketcher.strokes(strokesIncorrectAnswer)
-                .clear(true)
+            // clear strokes before adding new ones
+            sketcher.clear()
+            sketcher.strokes(centerStroke(strokesIncorrectAnswer,
+                    sketcher.elem.width / 2.,
+                    sketcher.elem.height / 2.))
                 .animate.strokes()
         }
         setTimeout(generateNewRecognitionQuestion, 1500);
@@ -376,9 +415,9 @@ function toggleGameAreaModal() {
         // indexOf returns -1 when the string is not found
         gameArea.className = gameArea.className.replace('open', '');
         enableScroll();
-        let sketcher = document.getElementById('game-area').sketcher;
         // deactivate interactive drawing when modal dialog is closed
-        sketcher.config({ 'interactive': false })
+        sketcher.config({ 'interactive': false });
+        sketcher.clear();
     } else {
         // the else here means that the string was not found
         gameArea.className = gameArea.className + ' open';
@@ -462,11 +501,10 @@ function setupLevels() {
 
     }
 
+    // assigning something to our sketchable
     // eslint-disable-next-line no-undef
-    var sketcher = new Sketchable(document.getElementById('myCanvas'));
+    sketcher = new Sketchable(document.getElementById('myCanvas'));
     sketcher.config({ 'interactive': false });
-    // keep reference for later
-    document.getElementById('game-area').sketcher = sketcher;
 
     // disabling swipping / scrolling while drawing
     // https://stackoverflow.com/questions/49047414/disable-scroll-swipe-action-for-html-canvas-drawing-on-ios
@@ -615,8 +653,9 @@ function generateNewDrawingQuestion() {
     document.getElementById('drawing-text-area').innerHTML = 'La lettre à dessiner est : ' + randomAnswer;
     updateExerciseProgressBar();
 
-    let sketcher = document.getElementById('game-area').sketcher;
+
     sketcher.config({ 'interactive': true });
+
     document.getElementById('drawing-show-answer').disabled = false;
     document.getElementById('drawing-correct-answer').disabled = true;
     document.getElementById('drawing-incorrect-answer').disabled = true;
