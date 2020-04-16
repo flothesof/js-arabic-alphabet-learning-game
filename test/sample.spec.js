@@ -62,4 +62,32 @@ describe("UI test suite for alphabet game", function() {
 
         expect(await page.$$(BODY_SELECTOR)).to.have.lengthOf(1);
     });
+
+    it("solving first two levels should unlock chapter two", async function() {
+        // first details should be open on first loading
+        let detailsOpen;
+        detailsOpen = await page.$eval(
+            'details',
+            (details) => details.open
+        );
+        expect(detailsOpen).to.eql(true);
+
+        // simulate finishing the first two chapters
+        await page.evaluate('updateStarRating(0, 0, 28); updateStarRating(0, 1, 28); updateChapterProgress();');
+
+        // expect the first chapter to now be collapsed
+        let detailsId;
+        detailsId = await page.$eval(
+            'details',
+            (details) => details.id
+        );
+        expect(detailsId).to.eql('details-chapter0');
+
+        detailsOpen = await page.$eval(
+            'details',
+            (details) => details.open
+        );
+        expect(detailsOpen).to.eql(false);
+
+    });
 });
