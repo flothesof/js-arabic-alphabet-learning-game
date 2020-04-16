@@ -16,7 +16,21 @@ const REVERSE_STAR_MAPPING = {
     '\u2606\u2606\u2606\u2606\u2606': 0
 }
 
-const LETTER_MAPPING = { 'a': 'ا', 'ou': 'و', 'i': 'ي', 'nou': 'ن', 'ha': 'ه', 'd': 'د', 'r': 'ر', 't': 'ت', 'b': 'ب', 'th': 'ث' }
+const LETTER_MAPPING = {
+    'a': 'ا',
+    'ou': 'و',
+    'i': 'ي',
+    'nou': 'ن',
+    'ha': 'ه',
+    'd': 'د',
+    'r': 'ر',
+    't': 'ت',
+    'b': 'ب',
+    'th': 'ث',
+    'j': 'ج',
+    '7': 'ح',
+    'kh': 'خ'
+}
 
 const LEVEL1 = [
     ['recognition', ['a', 'ou', 'i']],
@@ -30,7 +44,15 @@ const LEVEL2 = [
     ['drawing', ['a', 'ou', 'i', 'b', 't', 'th']]
 ]
 
-const LEVELS = [LEVEL1, LEVEL2]
+const LEVEL3 = [
+    ['recognition', ['j', '7', 'kh']],
+    ['drawing', ['j', '7', 'kh']],
+    ['recognition', ['a', 'ou', 'i', 'b', 't', 'th', 'j', '7', 'kh']],
+    ['drawing', ['a', 'ou', 'i', 'b', 't', 'th', 'j', '7', 'kh']]
+]
+
+
+const LEVELS = [LEVEL1, LEVEL2, LEVEL3]
 
 function randInt(N) {
     // returns integer between O and N-1
@@ -683,21 +705,23 @@ function loadProgress() {
     /**
      * Reloads previous progress data if it exists.
      */
-    if (localStorage.progress) {
+    if (localStorage.getItem('progress') !== null) {
         console.log('Found existing storage data.');
         console.log(localStorage.progress);
         let split = localStorage.progress.split(',');
-        let ids = [];
-        let scores = [];
-        for (let i in split) {
-            if (i % 2 === 0) {
-                ids.push(split[i]);
-            } else {
-                scores.push(split[i]);
+        if (split.length > 1) {
+            let ids = [];
+            let scores = [];
+            for (let i in split) {
+                if (i % 2 === 0) {
+                    ids.push(split[i]);
+                } else {
+                    scores.push(split[i]);
+                }
             }
-        }
-        for (let i in ids) {
-            document.getElementById(ids[i]).innerHTML = scores[i];
+            for (let i in ids) {
+                document.getElementById(ids[i]).innerHTML = scores[i];
+            }
         }
     }
     updateChapterProgress();
@@ -722,13 +746,27 @@ function saveProgress() {
 }
 
 // eslint-disable-next-line no-unused-vars
-function clearProgress() {
+function clearProgressAndReset() {
     /**
-     * Erases locally saved progress.
+     * Erases locally saved progress and reset all chapter progress to zero. 
      */
-    if (localStorage.progress) {
-        localStorage.progress = "";
+    localStorage.progress = null;
+    for (let chapterIndex in LEVELS) {
+        for (let exerciseIndex in LEVELS[chapterIndex]) {
+            let id = `score-chapter${chapterIndex}-exercise${exerciseIndex}`;
+            document.getElementById(id).innerHTML = `Score : ${STAR_MAPPING[0]}`;
+        }
     }
-    loadProgress();
+    updateChapterProgress();
+    document.getElementById('details-chapter0').open = true;
+}
+
+function unlockAllLevels() {
+    // cheat code for testing purposes only :)
+    for (let chapterIndex in LEVELS) {
+        for (let exerciseIndex in LEVELS[chapterIndex]) {
+            updateStarRating(chapterIndex, exerciseIndex, 32);
+        }
+    }
     updateChapterProgress();
 }

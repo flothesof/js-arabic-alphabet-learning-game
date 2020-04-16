@@ -107,9 +107,15 @@ inspired by https://medium.com/@andrejsabrickis/a-fullscreen-modal-with-fixed-he
 
 .modal.open {
     display: grid;
-    grid-template-rows: 100px auto 100px;
+    grid-template-rows: 100px auto 150px;
 }
 
 .modal__content {
     overflow-y: auto;
+}
+
+.modal__footer {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
 }
