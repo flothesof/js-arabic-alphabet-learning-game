@@ -220,7 +220,7 @@ function enableScroll() {
  * Actual game logic starts here.
  */
 
-function updateQuizzProgressBar() {
+function updateExerciseProgressBar() {
     // updates progress bar
     var quizzData = document.getElementById('game-area').quizzData;
     var progressBar = document.getElementById('progress-bar');
@@ -253,7 +253,7 @@ function generateNewRecognitionQuestion() {
     drawLetterOnCanvas(randomLetter);
 
     // update progress bar
-    updateQuizzProgressBar();
+    updateExerciseProgressBar();
 
 }
 
@@ -285,7 +285,7 @@ function drawLetterOnCanvas(randomLetter, clearBeforeDrawing = true) {
     ctx.fillText(randomLetter, canvas.width / 2., canvas.height / 2.);
 }
 
-function checkRecognitionAnswer(e) {
+function validateRecognitionAnswer(e) {
     var quizzData = document.getElementById('game-area').quizzData;
     if (quizzData['correct'] + quizzData['incorrect'] < quizzData['total']) {
         var caller = e.target || e.srcElement;
@@ -327,8 +327,8 @@ function checkRecognitionAnswer(e) {
 }
 
 function finishExercise(quizzData) {
-    /**  The game is finished: display dialog and update main interface.
-     * 
+    /**  
+     * The game is finished: display dialog and update main interface.
      * */
     var chapter, exercise, correct, incorrect;
     [correct, incorrect] = [quizzData['correct'], quizzData['incorrect']];
@@ -339,8 +339,9 @@ function finishExercise(quizzData) {
     infoBox.hidden = false;
     infoBox.innerHTML = `Bravo ! Vous venez de finir cet exercice. <br> Vous avez donné ${correct} bonne(s) réponse(s) et ${incorrect} mauvaise(s) réponse(s). <br> Votre score est de ${starScore}.`
 
-    updateQuizzProgressBar();
+    updateExerciseProgressBar();
     updateChapterProgress();
+    saveProgress();
     // if it's a drawing exercise we also disable the bottom buttons
     document.getElementById('drawing-correct-answer').disabled = true;
     document.getElementById('drawing-incorrect-answer').disabled = true;
@@ -366,11 +367,13 @@ function toggleGameAreaModal() {
 // eslint-disable-next-line no-unused-vars
 function setupLevels() {
     /**
-     * Parse level descriptions and build nested level layout.
+     * Parse level descriptions and insert nested level layout into HTML.
      */
     var root = document.getElementById('levels-container');
     for (let chapterIndex in LEVELS) {
         var levelRoot = document.createElement('details');
+        levelRoot.id = `details-chapter${chapterIndex}`;
+        levelRoot.open = true;
         var levelSummary = document.createElement('summary');
         var levelHeader = document.createElement('em')
         levelHeader.innerHTML = 'Chapitre ' + (parseInt(chapterIndex) + 1);
@@ -451,6 +454,12 @@ function setupLevels() {
     canvas_dom.addEventListener("touchend", function(event) { event.preventDefault() })
     canvas_dom.addEventListener("touchcancel", function(event) { event.preventDefault() })
 
+
+    // update available chapters
+    updateChapterProgress();
+
+    // reload previously saved progress
+    loadProgress();
 }
 
 
@@ -480,7 +489,7 @@ function runLevel(chapterIndex, exerciseIndex) {
             button.innerHTML = taskLetters[i];
             button.className = 'quizz-button';
             buttonArea.appendChild(button);
-            button.addEventListener("click", checkRecognitionAnswer);
+            button.addEventListener("click", validateRecognitionAnswer);
         }
         // initializing quizz data
         document.getElementById('game-area').quizzData = { 'total': 32, 'correct': 0, 'incorrect': 0 };
@@ -582,7 +591,7 @@ function generateNewDrawingQuestion() {
 
     // writing new drawing question
     document.getElementById('drawing-text-area').innerHTML = 'La lettre à dessiner est : ' + randomAnswer;
-    updateQuizzProgressBar();
+    updateExerciseProgressBar();
 
     let sketcher = document.getElementById('game-area').sketcher;
     sketcher.config({ 'interactive': true });
@@ -636,18 +645,31 @@ function updateChapterProgress() {
                 elem.disabled = true;
             }
         }
+        // close details of already finished chapters
+        if (previousChapterCompleted && chapterIndex !== "0") {
+            document.getElementById(`details-chapter${parseInt(chapterIndex) - 1}`).open = false;
+        }
+
+
         let exercicesInChapter = LEVELS[chapterIndex].length;
         let aboveThreeStars = 0;
+        let aboveFiveStars = 0;
         for (let exerciseIndex in LEVELS[chapterIndex]) {
             let previousStars = document.getElementById(`score-chapter${chapterIndex}-exercise${exerciseIndex}`).innerHTML.split('Score : ')[1];
             let currentScore = REVERSE_STAR_MAPPING[previousStars]
             if (currentScore >= 3) {
                 aboveThreeStars += 1;
             }
+            if (currentScore === 5) {
+                aboveFiveStars += 1;
+            }
         }
         // update chapter progress
         document.getElementById(`chapter-progress-${chapterIndex}`).innerHTML = `${Math.round(aboveThreeStars/ exercicesInChapter * 100)}%`;
 
+        if (aboveFiveStars === exercicesInChapter) {
+            document.getElementById(`chapter-progress-${chapterIndex}`).innerHTML += ' PERFECT';
+        }
         // update the completion indicator for setting the next chapters
         if (aboveThreeStars === exercicesInChapter) {
             previousChapterCompleted = true;
@@ -655,4 +677,58 @@ function updateChapterProgress() {
             previousChapterCompleted = false;
         }
     }
+}
+
+function loadProgress() {
+    /**
+     * Reloads previous progress data if it exists.
+     */
+    if (localStorage.progress) {
+        console.log('Found existing storage data.');
+        console.log(localStorage.progress);
+        let split = localStorage.progress.split(',');
+        let ids = [];
+        let scores = [];
+        for (let i in split) {
+            if (i % 2 === 0) {
+                ids.push(split[i]);
+            } else {
+                scores.push(split[i]);
+            }
+        }
+        for (let i in ids) {
+            document.getElementById(ids[i]).innerHTML = scores[i];
+        }
+    }
+    updateChapterProgress();
+}
+
+function saveProgress() {
+    /**
+     * Saves progress data to browser local storage.
+     */
+    let savedValues = [];
+    for (let chapterIndex in LEVELS) {
+        for (let exerciseIndex in LEVELS[chapterIndex]) {
+            let id = `score-chapter${chapterIndex}-exercise${exerciseIndex}`;
+            let currentScore = document.getElementById(id).innerHTML;
+            savedValues.push([
+                [id, currentScore]
+            ]);
+        }
+
+    }
+    localStorage.progress = savedValues;
+}
+
+// eslint-disable-next-line no-unused-vars
+function clearProgress() {
+    /**
+     * Erases locally saved progress.
+     */
+    if (localStorage.progress) {
+        localStorage.progress = "";
+    }
+    loadProgress();
+    updateChapterProgress();
 }

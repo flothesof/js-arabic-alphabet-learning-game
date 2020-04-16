@@ -17,7 +17,10 @@
     <p>Cette web-application a pour but de vous faire apprendre l'alphabet arabe. Elle fonctionne comme un jeu, c'est à dire qu'il va vous falloir passer des niveaux les uns après les autres pour débloquer de nouvelles lettres à apprendre.</p>
     <p>Pour passer au niveau suivant, il vous faut atteindre au moins trois étoiles, c'est-à-dire 28 réponses justes sur 32 questions.</p>
 
+
+
     <h1>Niveaux</h1>
+
     <div id="levels-container"></div>
 
     <div class="modal" id='game-area'>
@@ -41,6 +44,10 @@
         </div>
     </div>
 
+    <h2>Options avancées</h2>
+    <button onclick="clearProgress()" title="settings" class="icon-button" id="btnSettings">
+        <span>Remettre la progression à zéro</span>
+      </button>
     <script src="script.js"></script>
     <script src="https://luis.leiva.name/jsketch/js/dist/sketchable.full.min.js"></script>
     <script>
