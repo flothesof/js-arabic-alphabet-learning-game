@@ -17,7 +17,7 @@ describe("sample test", function () {
     server.listen(3000);
 
     browser = await puppeteer.launch({
-      headless: false,
+      headless: true,
       defaultViewport: null,
     });
   });
