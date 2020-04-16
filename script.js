@@ -761,6 +761,7 @@ function clearProgressAndReset() {
     document.getElementById('details-chapter0').open = true;
 }
 
+// eslint-disable-next-line no-unused-vars
 function unlockAllLevels() {
     // cheat code for testing purposes only :)
     for (let chapterIndex in LEVELS) {
