@@ -22,14 +22,16 @@ const LETTER_MAPPING = {
     'i': 'ي',
     'nou': 'ن',
     'ha': 'ه',
-    'd': 'د',
-    'r': 'ر',
     't': 'ت',
     'b': 'ب',
     'th': 'ث',
     'j': 'ج',
     '7': 'ح',
-    'kh': 'خ'
+    'kh': 'خ',
+    'd': 'د',
+    'dh': 'ذ',
+    'r': 'ر',
+    'z': 'ز',
 }
 
 const LEVEL1 = [
@@ -51,8 +53,15 @@ const LEVEL3 = [
     ['drawing', ['a', 'ou', 'i', 'b', 't', 'th', 'j', '7', 'kh']]
 ]
 
+const LEVEL4 = [
+    ['recognition', ['d', 'dh', 'r', 'z']],
+    ['drawing', ['d', 'dh', 'r', 'z']],
+    ['recognition', ['t', 'th', 'j', '7', 'kh', 'd', 'dh', 'r', 'z']],
+    ['drawing', ['t', 'th', 'j', '7', 'kh', 'd', 'dh', 'r', 'z']]
+]
 
-const LEVELS = [LEVEL1, LEVEL2, LEVEL3]
+
+const LEVELS = [LEVEL1, LEVEL2, LEVEL3, LEVEL4]
 
 function randInt(N) {
     // returns integer between O and N-1
