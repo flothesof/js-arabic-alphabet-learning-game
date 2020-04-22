@@ -119,3 +119,12 @@ inspired by https://medium.com/@andrejsabrickis/a-fullscreen-modal-with-fixed-he
     margin-left: auto;
     margin-right: auto;
 }
+
+.arabic {
+    font-family: "Amiri", "Rubik", sans-serif;
+    font-size: 2em;
+}
+
+td {
+    border-bottom: 1px solid black;
+}
