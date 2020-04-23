@@ -125,10 +125,16 @@ inspired by https://medium.com/@andrejsabrickis/a-fullscreen-modal-with-fixed-he
     font-size: 2em;
 }
 
+.arabic_smaller {
+    font-family: "Amiri", "Rubik", sans-serif;
+    font-size: 1.5em;
+}
+
 td {
     border-bottom: 1px solid black;
 }
 
 audio {
     display: block;
+    width: 100px;
 }

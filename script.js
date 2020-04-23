@@ -510,7 +510,7 @@ function setupLevels() {
         div.appendChild(ul)
         for (let word of validWords) {
             let li = document.createElement('li');
-            li.innerHTML = `${word}  <audio controls>
+            li.innerHTML = `<span class='arabic_smaller'>${word}</span>  <audio controls>
             <source src="${SOUNDS[word]}" type="audio/mpeg">
           Your browser does not support the audio element.
           </audio> `
