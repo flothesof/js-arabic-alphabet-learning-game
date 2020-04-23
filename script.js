@@ -17,51 +17,61 @@ const REVERSE_STAR_MAPPING = {
 }
 
 const LETTER_MAPPING = {
-    'a': 'ا',
-    'ou': 'و',
-    'i': 'ي',
-    'nou': 'ن',
-    'ha': 'ه',
-    't': 'ت',
+    'ā': 'ا',
     'b': 'ب',
+    't': 'ت',
     'th': 'ث',
-    'j': 'ج',
-    '7': 'ح',
+    'dj': 'ج',
+    'ḥ': 'ح',
     'kh': 'خ',
     'd': 'د',
     'dh': 'ذ',
     'r': 'ر',
     'z': 'ز',
+    's': 'س',
+    'sh': 'ش',
+    'ṣ': 'ص',
+    'ḍ': 'ض',
+    'ou': 'و',
+    'i': 'ي',
+    'nou': 'ن',
+    'ha': 'ه'
 }
 
 const LEVEL1 = [
-    ['recognition', ['a', 'ou', 'i']],
-    ['drawing', ['a', 'ou', 'i']]
+    ['recognition', ['ā', 'ou', 'i']],
+    ['drawing', ['ā', 'ou', 'i']]
 ]
 
 const LEVEL2 = [
     ['recognition', ['b', 't', 'th']],
     ['drawing', ['b', 't', 'th']],
-    ['recognition', ['a', 'ou', 'i', 'b', 't', 'th']],
-    ['drawing', ['a', 'ou', 'i', 'b', 't', 'th']]
+    ['recognition', ['ā', 'ou', 'i', 'b', 't', 'th']],
+    ['drawing', ['ā', 'ou', 'i', 'b', 't', 'th']]
 ]
 
 const LEVEL3 = [
-    ['recognition', ['j', '7', 'kh']],
-    ['drawing', ['j', '7', 'kh']],
-    ['recognition', ['a', 'ou', 'i', 'b', 't', 'th', 'j', '7', 'kh']],
-    ['drawing', ['a', 'ou', 'i', 'b', 't', 'th', 'j', '7', 'kh']]
+    ['recognition', ['dj', 'ḥ', 'kh']],
+    ['drawing', ['dj', 'ḥ', 'kh']],
+    ['recognition', ['ā', 'ou', 'i', 'b', 't', 'th', 'dj', 'ḥ', 'kh']],
+    ['drawing', ['ā', 'ou', 'i', 'b', 't', 'th', 'dj', 'ḥ', 'kh']]
 ]
 
 const LEVEL4 = [
     ['recognition', ['d', 'dh', 'r', 'z']],
     ['drawing', ['d', 'dh', 'r', 'z']],
-    ['recognition', ['t', 'th', 'j', '7', 'kh', 'd', 'dh', 'r', 'z']],
-    ['drawing', ['t', 'th', 'j', '7', 'kh', 'd', 'dh', 'r', 'z']]
+    ['recognition', ['t', 'th', 'dj', 'ḥ', 'kh', 'd', 'dh', 'r', 'z']],
+    ['drawing', ['t', 'th', 'dj', 'ḥ', 'kh', 'd', 'dh', 'r', 'z']]
 ]
 
+const LEVEL5 = [
+    ['recognition', ['s', 'sh', 'ṣ', 'ḍ']],
+    ['drawing', ['s', 'sh', 'ṣ', 'ḍ']],
+    ['recognition', ['d', 'dh', 'r', 'z', 's', 'sh', 'ṣ', 'ḍ']],
+    ['drawing', ['d', 'dh', 'r', 'z', 's', 'sh', 'ṣ', 'ḍ']],
+]
 
-const LEVELS = [LEVEL1, LEVEL2, LEVEL3, LEVEL4]
+const LEVELS = [LEVEL1, LEVEL2, LEVEL3, LEVEL4, LEVEL5]
 
 function randInt(N) {
     // returns integer between O and N-1
