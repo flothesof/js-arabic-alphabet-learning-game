@@ -98,6 +98,16 @@ function randInt(N) {
     // returns integer between O and N-1
     return Math.floor(Math.random() * N);
 }
+/* Sketcher related stuff */
+const DRAW_INTERACTIVE = {
+    firstPointSize: 3,
+    lineWidth: 3,
+    strokeStyle: '#F0F',
+    fillStyle: '#F0F',
+    lineCap: 'round',
+    lineJoin: 'round',
+    miterLimit: 10
+}
 
 function centerStroke(stroke, offsetX, offsetY) {
     let centers_x = []
@@ -387,13 +397,11 @@ function validateRecognitionAnswer(e) {
         if (document.getElementById('game-area').answer == caller.innerHTML) {
             document.getElementById('game-area').quizzData['correct'] += 1;
             sketcher.config({
+                interactive: false,
                 graphics: {
                     lineWidth: 20,
                     strokeStyle: 'green'
                 },
-                options: {
-                    interactive: false
-                }
             });
             // clear strokes before adding new ones
             sketcher.clear()
@@ -404,12 +412,10 @@ function validateRecognitionAnswer(e) {
         } else {
             document.getElementById('game-area').quizzData['incorrect'] += 1;
             sketcher.config({
+                interactive: false,
                 graphics: {
                     lineWidth: 20,
                     strokeStyle: 'red'
-                },
-                options: {
-                    interactive: false
                 }
             });
             // clear strokes before adding new ones
@@ -456,7 +462,7 @@ function toggleGameAreaModal() {
         gameArea.className = gameArea.className.replace('open', '');
         enableScroll();
         // deactivate interactive drawing when modal dialog is closed
-        sketcher.config({ 'interactive': false });
+        sketcher.config({ interactive: false });
         sketcher.clear();
     } else {
         // the else here means that the string was not found
@@ -581,7 +587,7 @@ function setupLevels() {
     // assigning something to our sketchable
     // eslint-disable-next-line no-undef
     sketcher = new Sketchable(document.getElementById('myCanvas'));
-    sketcher.config({ 'interactive': false });
+    sketcher.config({ interactive: false });
 
     // disabling swipping / scrolling while drawing
     // https://stackoverflow.com/questions/49047414/disable-scroll-swipe-action-for-html-canvas-drawing-on-ios
@@ -730,8 +736,10 @@ function generateNewDrawingQuestion() {
     document.getElementById('drawing-text-area').innerHTML = 'La lettre à dessiner est : ' + randomAnswer;
     updateExerciseProgressBar();
 
-
-    sketcher.config({ 'interactive': true });
+    sketcher.config({
+        interactive: true,
+        graphics: DRAW_INTERACTIVE,
+    });
 
     document.getElementById('drawing-show-answer').disabled = false;
     document.getElementById('drawing-correct-answer').disabled = true;
