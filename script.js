@@ -16,6 +16,27 @@ const REVERSE_STAR_MAPPING = {
     '\u2606\u2606\u2606\u2606\u2606': 0
 }
 
+const SOUNDS = {
+    'ح ب ي ب ي': 'assets/habibi.mp3',
+    'خ ي ار': 'assets/khiar.mp3',
+    'ت ب و ل ة': 'assets/tabboule.mp3',
+    'ث و م': 'assets/thoum.mp3',
+    'د ج ا ج': 'assets/djedj.mp3',
+    'ذ ر ة': 'assets/dhara.mp3',
+    'ر ز': 'assets/roz.mp3',
+    'ش م س': 'assets/shams.mp3',
+    'ص و ص أ ص ف ر': 'assets/souss asfar.mp3',
+    'ض و': 'assets/daouw.mp3',
+    'ب ط ا ط ا': 'assets/batata.mp3',
+    'ظ ل': 'assets/zol.mp3',
+    'ع ي د ا': 'assets/aida.mp3',
+    'غ س ل ا ل ي د ي ن': 'assets/rassil al idain.mp3',
+    'ق م ر': 'assets/qamar.mp3',
+    'ك ل ب': 'assets/kalb.mp3',
+    'ن و ر': 'assets/nuur.mp3',
+    'ه ذ ا': 'assets/haida.mp3'
+}
+
 const LETTER_MAPPING = {
     'ā': 'ا',
     'b': 'ب',
@@ -451,6 +472,7 @@ function setupLevels() {
      */
     var root = document.getElementById('levels-container');
     for (let chapterIndex in LEVELS) {
+        // create level heading
         var levelRoot = document.createElement('details');
         levelRoot.id = `details-chapter${chapterIndex}`;
         levelRoot.open = true;
@@ -460,17 +482,53 @@ function setupLevels() {
         levelHeader.innerHTML += ` <span class="chapter-progress" id="chapter-progress-${chapterIndex}">0%</span>`
         levelSummary.appendChild(levelHeader)
         levelRoot.appendChild(levelSummary)
+
+        // embed the vocabulary words that exemplify this 
+        // level's new sounds 
+        var levelLetters = [];
+        for (let letter of LEVELS[chapterIndex][0][1]) {
+            levelLetters.push(LETTER_MAPPING[letter]);
+        }
+
+        // eslint-disable-next-line no-undef
+        levelLetters = [...new Set(levelLetters)];
+
+        let validWords = [];
+        for (let word in SOUNDS) {
+            for (let letter of levelLetters) {
+                if (word.indexOf(letter) != -1) {
+                    validWords.push(word);
+                    break;
+                }
+            }
+        }
+        var div = document.createElement('div');
+        div.innerHTML = "Mots du lexique s'écrivant avec les lettres introduites dans ce chapitre :";
+        div.className = 'exercise'
+        levelRoot.appendChild(div);
+        var ul = document.createElement('ul');
+        div.appendChild(ul)
+        for (let word of validWords) {
+            let li = document.createElement('li');
+            li.innerHTML = `${word}  <audio controls>
+            <source src="${SOUNDS[word]}" type="audio/mpeg">
+          Your browser does not support the audio element.
+          </audio> `
+            ul.appendChild(li);
+        }
+
+        // create level exercices
         for (let exerciseIndex in LEVELS[chapterIndex]) {
-            var items = LEVELS[chapterIndex][exerciseIndex]
-            var taskType = items[0];
-            var tasktaskLetters = items[1];
+            let items = LEVELS[chapterIndex][exerciseIndex]
+            let taskType = items[0];
+            let taskLetters = items[1];
             if (taskType == 'recognition') {
-                var div = document.createElement('div')
+                let div = document.createElement('div')
                 levelRoot.appendChild(div)
                 div.className = 'exercise'
                 var header = document.createElement('h3')
                 header.appendChild(document.createTextNode('Exercice ' + (parseInt(chapterIndex) + 1) + '.' + (parseInt(exerciseIndex) + 1) + ' : ' +
-                    ' Reconnaître les lettres ' + tasktaskLetters
+                    ' Reconnaître les lettres ' + taskLetters
                     .join(' - ')))
 
                 div.append(header)
@@ -494,7 +552,7 @@ function setupLevels() {
                 div.className = 'exercise'
                 header = document.createElement('h3')
                 header.appendChild(document.createTextNode('Exercice ' + (parseInt(chapterIndex) + 1) + '.' + (parseInt(exerciseIndex) + 1) + ' : ' +
-                    ' Dessiner les lettres ' + tasktaskLetters
+                    ' Dessiner les lettres ' + taskLetters
                     .join(' - ')))
 
                 div.append(header)

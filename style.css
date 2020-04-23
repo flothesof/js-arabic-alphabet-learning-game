@@ -128,3 +128,7 @@ inspired by https://medium.com/@andrejsabrickis/a-fullscreen-modal-with-fixed-he
 td {
     border-bottom: 1px solid black;
 }
+
+audio {
+    display: block;
+}
