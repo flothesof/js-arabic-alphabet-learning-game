@@ -413,12 +413,15 @@ function validateRecognitionAnswer(e) {
                     strokeStyle: 'green'
                 },
             });
-            // clear strokes before adding new ones
             sketcher.clear()
             sketcher.strokes(centerStroke(strokesCorrectAnswer,
                     sketcher.elem.width / 2.,
                     sketcher.elem.height / 2.))
                 .animate.strokes()
+
+            // add some button highlights
+            caller.classList.toggle('right-answer');
+            setTimeout(function() { caller.classList.toggle("right-answer"); }, 1500);
         } else {
             document.getElementById('game-area').quizzData['incorrect'] += 1;
             sketcher.config({
@@ -428,12 +431,27 @@ function validateRecognitionAnswer(e) {
                     strokeStyle: 'red'
                 }
             });
-            // clear strokes before adding new ones
             sketcher.clear()
             sketcher.strokes(centerStroke(strokesIncorrectAnswer,
                     sketcher.elem.width / 2.,
                     sketcher.elem.height / 2.))
                 .animate.strokes()
+
+            // add some highlights to buttons correct/incorrect
+            caller.classList.toggle("wrong-answer");
+            setTimeout(function() {
+                caller.classList.toggle("wrong-answer");
+            }, 1500);
+            let buttons = document.getElementsByClassName('quizz-button');
+            for (let button of buttons) {
+                if (button.innerHTML == document.getElementById('game-area').answer) {
+                    button.classList.toggle('right-answer');
+                    setTimeout(function() {
+                        button.classList.toggle("right-answer");
+                    }, 1500);
+                    break;
+                }
+            }
         }
         setTimeout(generateNewRecognitionQuestion, 1500);
 
