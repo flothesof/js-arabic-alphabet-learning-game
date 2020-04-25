@@ -615,6 +615,18 @@ function setupLevels() {
     loadProgress();
 }
 
+function shuffleArray(inputArray) {
+    /* Returns a shuffled copy of an array. 
+    Adapted from https://medium.com/@nitinpatel_20236/how-to-shuffle-correctly-shuffle-an-array-in-javascript-15ea3f84bfb */
+    let array = [...inputArray]; // shallow copy of array
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * i);
+        const temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
+}
 
 function runLevel(chapterIndex, exerciseIndex) {
     /**
@@ -635,11 +647,14 @@ function runLevel(chapterIndex, exerciseIndex) {
         while (buttonArea.firstChild) {
             buttonArea.removeChild(buttonArea.firstChild);
         }
+        // shuffling taskletters
+        var shuffledTaskLetters = shuffleArray(taskLetters);
+
         // adding a button for each letter in the current level
         for (let i = 0; i < taskLetters
             .length; i++) {
             let button = document.createElement('button');
-            button.innerHTML = taskLetters[i];
+            button.innerHTML = shuffledTaskLetters[i];
             button.className = 'quizz-button';
             buttonArea.appendChild(button);
             button.addEventListener("click", validateRecognitionAnswer);
