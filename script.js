@@ -16,7 +16,38 @@ const REVERSE_STAR_MAPPING = {
     '\u2606\u2606\u2606\u2606\u2606': 0
 }
 
-const SOUNDS = {
+const LETTER_SOUNDS = {
+    'ā': 'assets/letter_a_bar.mp3',
+    'b': 'assets/letter_b.mp3',
+    't': 'assets/letter_t.mp3',
+    'th': 'assets/letter_th.mp3',
+    'dj': 'assets/letter_dj.mp3',
+    'ḥ': 'assets/letter_h_dot.mp3',
+    'kh': 'assets/letter_kh.mp3',
+    'd': 'assets/letter_d.mp3',
+    'dh': 'assets/letter_dh.mp3',
+    'r': 'assets/letter_r.mp3',
+    'z': 'assets/letter_z.mp3',
+    's': 'assets/letter_s.mp3',
+    'sh': 'assets/letter_sh.mp3',
+    'ṣ': 'assets/letter_s_dot.mp3',
+    'ḍ': 'assets/letter_d_dot.mp3',
+    'ṭ': 'assets/letter_t_dot.mp3',
+    'ẓ': 'assets/letter_z_dot.mp3',
+    'ʿ / ‘': 'assets/letter_3.mp3',
+    'gh': 'assets/letter_3_dot.mp3',
+    'f': 'assets/letter_f.mp3',
+    'q': 'assets/letter_q.mp3',
+    'k': 'assets/letter_k.mp3',
+    'l': 'assets/letter_l.mp3',
+    'm': 'assets/letter_m.mp3',
+    'n': 'assets/letter_n.mp3',
+    'h': 'assets/letter_h.mp3',
+    'ou': 'assets/letter_w.mp3',
+    'i': 'assets/letter_y.mp3',
+}
+
+const WORD_SOUNDS = {
     'ح ب ي ب ي': 'assets/habibi.mp3',
     'خ ي ار': 'assets/khiar.mp3',
     'ت ب و ل ة': 'assets/tabboule.mp3',
@@ -537,18 +568,36 @@ function setupLevels() {
         levelSummary.appendChild(levelHeader)
         levelRoot.appendChild(levelSummary)
 
-        // embed the vocabulary words that exemplify this 
-        // level's new sounds 
+        // chapter description
+
+        // level's new letters 
         var levelLetters = [];
+        var transcribedLevelLetters = [];
         for (let letter of LEVELS[chapterIndex][0][1]) {
             levelLetters.push(LETTER_MAPPING[letter]);
+            transcribedLevelLetters.push(letter);
         }
 
         // eslint-disable-next-line no-undef
         levelLetters = [...new Set(levelLetters)];
+        // eslint-disable-next-line no-undef
+        transcribedLevelLetters = [...new Set(transcribedLevelLetters)];
+
+        var div = document.createElement('div');
+        div.innerHTML = "Nouvelles lettres dans ce chapitre :";
+        div.className = 'exercise'
+        levelRoot.appendChild(div);
+        var ul = document.createElement('ul');
+        div.appendChild(ul)
+        for (let letter in levelLetters) {
+            let li = document.createElement('li');
+            li.innerHTML = `<span class='arabic'>${levelLetters[letter]}</span>, transcrit par ${transcribedLevelLetters[letter]}, prononcé <audio controls> <source src="${LETTER_SOUNDS[transcribedLevelLetters[letter]]}" type="audio/mpeg">
+          Your browser does not support the audio element.</audio>`
+            ul.appendChild(li);
+        }
 
         let validWords = [];
-        for (let word in SOUNDS) {
+        for (let word in WORD_SOUNDS) {
             for (let letter of levelLetters) {
                 if (word.indexOf(letter) != -1) {
                     validWords.push(word);
@@ -556,16 +605,16 @@ function setupLevels() {
                 }
             }
         }
-        var div = document.createElement('div');
+        div = document.createElement('div');
         div.innerHTML = "Mots du lexique s'écrivant avec les lettres introduites dans ce chapitre :";
         div.className = 'exercise'
         levelRoot.appendChild(div);
-        var ul = document.createElement('ul');
+        ul = document.createElement('ul');
         div.appendChild(ul)
         for (let word of validWords) {
             let li = document.createElement('li');
             li.innerHTML = `<span class='arabic_smaller'>${word}</span>  <audio controls>
-            <source src="${SOUNDS[word]}" type="audio/mpeg">
+            <source src="${WORD_SOUNDS[word]}" type="audio/mpeg">
           Your browser does not support the audio element.
           </audio> `
             ul.appendChild(li);

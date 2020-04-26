@@ -135,7 +135,7 @@ td {
 }
 
 audio {
-    display: block;
+    display: inline-block;
     width: 100px;
 }
 
