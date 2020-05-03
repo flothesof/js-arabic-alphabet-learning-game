@@ -389,7 +389,7 @@ function updateExerciseProgressBar() {
     // updates progress bar
     var quizzData = document.getElementById('game-area').quizzData;
     var progressBar = document.getElementById('progress-bar');
-    progressBar.innerHTML = 'Question : ' + (quizzData['correct'] + quizzData['incorrect']) + '/' + quizzData['total'] + ' | Correctes : ' + quizzData['correct'] + '/' + (quizzData['correct'] + quizzData['incorrect']);
+    progressBar.innerHTML = 'Question : ' + (quizzData['correct'] + quizzData['incorrect'] + 1) + '/' + quizzData['total'] + ' | Correctes : ' + quizzData['correct'] + '/' + (quizzData['correct'] + quizzData['incorrect']);
 }
 
 function generateNewRecognitionQuestion() {
