@@ -385,11 +385,15 @@ function enableScroll() {
  * Actual game logic starts here.
  */
 
-function updateExerciseProgressBar() {
+function updateExerciseProgressBar(isFinished = false) {
     // updates progress bar
     var quizzData = document.getElementById('game-area').quizzData;
     var progressBar = document.getElementById('progress-bar');
-    progressBar.innerHTML = 'Question : ' + (quizzData['correct'] + quizzData['incorrect'] + 1) + '/' + quizzData['total'] + ' | Correctes : ' + quizzData['correct'] + '/' + (quizzData['correct'] + quizzData['incorrect']);
+    if (isFinished) {
+        progressBar.innerHTML = 'Question : ' + (quizzData['correct'] + quizzData['incorrect']) + '/' + quizzData['total'] + ' | Correctes : ' + quizzData['correct'] + '/' + (quizzData['correct'] + quizzData['incorrect']);
+    } else {
+        progressBar.innerHTML = 'Question : ' + (quizzData['correct'] + quizzData['incorrect'] + 1) + '/' + quizzData['total'] + ' | Correctes : ' + quizzData['correct'] + '/' + (quizzData['correct'] + quizzData['incorrect']);
+    }
 }
 
 function generateNewRecognitionQuestion() {
@@ -450,65 +454,69 @@ function drawLetterOnCanvas(randomLetter, clearBeforeDrawing = true) {
     ctx.fillText(randomLetter, canvas.width / 2., canvas.height / 2.);
 }
 
-function validateRecognitionAnswer(e) {
-    var quizzData = document.getElementById('game-area').quizzData;
-    if (quizzData['correct'] + quizzData['incorrect'] < quizzData['total']) {
-        var caller = e.target || e.srcElement;
+function showRightWrongAnswer(caller) {
+    if (document.getElementById('game-area').answer == caller.innerHTML) {
+        document.getElementById('game-area').quizzData['correct'] += 1;
+        sketcher.config({
+            interactive: false,
+            graphics: {
+                lineWidth: 20,
+                strokeStyle: 'green'
+            },
+        });
+        sketcher.clear()
+        sketcher.strokes(centerStroke(strokesCorrectAnswer,
+                sketcher.elem.width / 2.,
+                sketcher.elem.height / 2.))
+            .animate.strokes()
 
-        if (document.getElementById('game-area').answer == caller.innerHTML) {
-            document.getElementById('game-area').quizzData['correct'] += 1;
-            sketcher.config({
-                interactive: false,
-                graphics: {
-                    lineWidth: 20,
-                    strokeStyle: 'green'
-                },
-            });
-            sketcher.clear()
-            sketcher.strokes(centerStroke(strokesCorrectAnswer,
-                    sketcher.elem.width / 2.,
-                    sketcher.elem.height / 2.))
-                .animate.strokes()
+        // add some button highlights
+        caller.classList.toggle('right-answer');
+        setTimeout(function() { caller.classList.toggle("right-answer"); }, 1500);
+    } else {
+        document.getElementById('game-area').quizzData['incorrect'] += 1;
+        sketcher.config({
+            interactive: false,
+            graphics: {
+                lineWidth: 20,
+                strokeStyle: 'red'
+            }
+        });
+        sketcher.clear()
+        sketcher.strokes(centerStroke(strokesIncorrectAnswer,
+                sketcher.elem.width / 2.,
+                sketcher.elem.height / 2.))
+            .animate.strokes()
 
-            // add some button highlights
-            caller.classList.toggle('right-answer');
-            setTimeout(function() { caller.classList.toggle("right-answer"); }, 1500);
-        } else {
-            document.getElementById('game-area').quizzData['incorrect'] += 1;
-            sketcher.config({
-                interactive: false,
-                graphics: {
-                    lineWidth: 20,
-                    strokeStyle: 'red'
-                }
-            });
-            sketcher.clear()
-            sketcher.strokes(centerStroke(strokesIncorrectAnswer,
-                    sketcher.elem.width / 2.,
-                    sketcher.elem.height / 2.))
-                .animate.strokes()
-
-            // add some highlights to buttons correct/incorrect
+        // add some highlights to buttons correct/incorrect
+        caller.classList.toggle("wrong-answer");
+        setTimeout(function() {
             caller.classList.toggle("wrong-answer");
-            setTimeout(function() {
-                caller.classList.toggle("wrong-answer");
-            }, 1500);
-            let buttons = document.getElementsByClassName('quizz-button');
-            for (let button of buttons) {
-                if (button.innerHTML == document.getElementById('game-area').answer) {
-                    button.classList.toggle('right-answer');
-                    setTimeout(function() {
-                        button.classList.toggle("right-answer");
-                    }, 1500);
-                    break;
-                }
+        }, 1500);
+        let buttons = document.getElementsByClassName('quizz-button');
+        for (let button of buttons) {
+            if (button.innerHTML == document.getElementById('game-area').answer) {
+                button.classList.toggle('right-answer');
+                setTimeout(function() {
+                    button.classList.toggle("right-answer");
+                }, 1500);
+                break;
             }
         }
-        setTimeout(generateNewRecognitionQuestion, 1500);
+    }
+}
 
+function validateRecognitionAnswer(e) {
+    var quizzData = document.getElementById('game-area').quizzData;
+    var caller = e.target || e.srcElement;
+    if (quizzData['correct'] + quizzData['incorrect'] < quizzData['total'] - 1) {
+        // there are still questions left
+        showRightWrongAnswer(caller);
+        setTimeout(generateNewRecognitionQuestion, 1500);
     } else {
         // this exercise is now finished
-        finishExercise(quizzData);
+        showRightWrongAnswer(caller);
+        setTimeout(function() { finishExercise(quizzData) }, 1500);
     }
 }
 
@@ -525,7 +533,7 @@ function finishExercise(quizzData) {
     infoBox.hidden = false;
     infoBox.innerHTML = `Bravo ! Vous venez de finir cet exercice. <br> Vous avez donné ${correct} bonne(s) réponse(s) et ${incorrect} mauvaise(s) réponse(s). <br> Votre score est de ${starScore}.`
 
-    updateExerciseProgressBar();
+    updateExerciseProgressBar(true);
     updateChapterProgress();
     saveProgress();
     // if it's a drawing exercise we also disable the bottom buttons
