@@ -153,7 +153,17 @@ const LEVEL8 = [
     ['drawing', ['f', 'q', 'k', 'l', 'm', 'n', 'h']],
 ]
 
-const LEVELS = [LEVEL1, LEVEL2, LEVEL3, LEVEL4, LEVEL5, LEVEL6, LEVEL7, LEVEL8]
+// emphatiques et consoeurs
+const LEVEL9 = [
+    ['recognition', ['ṣ', 'ḍ', 'ṭ', 'ẓ']],
+    ['drawing', ['ṣ', 'ḍ', 'ṭ', 'ẓ']],
+    ['recognition', ['s', 'd', 't', 'z']],
+    ['drawing', ['s', 'd', 't', 'z']],
+    ['recognition', ['ṣ', 'ḍ', 'ṭ', 'ẓ', 's', 'd', 't', 'z']],
+    ['drawing', ['ṣ', 'ḍ', 'ṭ', 'ẓ', 's', 'd', 't', 'z']],
+]
+
+const LEVELS = [LEVEL1, LEVEL2, LEVEL3, LEVEL4, LEVEL5, LEVEL6, LEVEL7, LEVEL8, LEVEL9]
 
 function randInt(N) {
     // returns integer between O and N-1
